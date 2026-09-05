@@ -11,7 +11,7 @@ service cloud.firestore {
         && request.auth.uid == userId
         && request.resource.data.keys().hasOnly(['nickname', 'avatarUrl', 'score'])
         && request.resource.data.nickname is string
-        && request.resource.data.nickname.size() <= 16
+        && request.resource.data.nickname.size() <= 32
         && request.resource.data.avatarUrl is string
         && request.resource.data.avatarUrl.size() <= 2048
         && request.resource.data.score is number

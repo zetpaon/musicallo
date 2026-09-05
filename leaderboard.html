@@ -6,6 +6,7 @@
     <title>Лидерборд — Угадай трек</title>
     <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore-compat.js"></script>
+    <script src="levels.js"></script>
     <style>
         :root { --bg: #0a0a0f; --card: #151522; --border: #2a2a3e; --accent: #a29bfe; --text: #e0e0e0; --dim: #8888aa; --warning: #fdcb6e; }
         * { box-sizing: border-box; }
@@ -46,23 +47,6 @@
         const firebaseConfig = { apiKey: "AIzaSyAjaN1dabndg-ccVFGcrxdkuHB9wozyrfw", authDomain: "musicallo-3cd30.firebaseapp.com", projectId: "musicallo-3cd30", storageBucket: "musicallo-3cd30.firebasestorage.app", messagingSenderId: "470668714876", appId: "1:470668714876:web:b26686b92ac4f6c6f87af9" };
         firebase.initializeApp(firebaseConfig);
         const list = document.getElementById('leaderboard');
-        const thresholdForLevel = level => level <= 10 ? 150 : 150 + Math.min(70, Math.ceil((level - 10) / 10) * 5);
-        function getColorForLevel(level) {
-            if (level <= 10) return '#a0c4ff';
-            if (level <= 20) return '#4a90e2';
-            if (level <= 30) return '#9b59b6';
-            if (level <= 40) return '#e91e8c';
-            if (level <= 50) return '#e74c3c';
-            if (level <= 60) return '#f1c40f';
-            if (level <= 70) return '#2ecc71';
-            if (level <= 80) return '#00e5ff';
-            return '#ff6600';
-        }
-        function getLevel(score) {
-            let level = 1, required = 150;
-            while (score >= required && level < 150) { level++; required += thresholdForLevel(level); }
-            return level;
-        }
         function safeAvatarUrl(value) {
             try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) ? url.href : ''; } catch { return ''; }
         }
@@ -78,8 +62,8 @@
                 if (url) { const image = document.createElement('img'); image.src = url; image.alt = ''; image.referrerPolicy = 'no-referrer'; avatar.appendChild(image); } else avatar.textContent = '👤';
                 const details = document.createElement('div'); details.className = 'player-info';
                 const name = document.createElement('div'); name.className = 'name'; name.textContent = user.nickname || 'Игрок';
-                const playerLevel = getLevel(score);
-                const level = document.createElement('span'); level.className = 'level-badge'; level.textContent = `Уровень ${playerLevel}`; level.style.backgroundColor = getColorForLevel(playerLevel);
+                const levelInfo = window.musicalloLevels.getLevelInfo(score);
+                const level = document.createElement('span'); level.className = 'level-badge'; level.textContent = `Уровень ${levelInfo.level}`; level.style.backgroundColor = levelInfo.color;
                 details.append(name, level);
                 const scoreElement = document.createElement('span'); scoreElement.className = 'score'; scoreElement.textContent = `${score} очк.`;
                 item.append(rank, avatar, details, scoreElement); list.appendChild(item);
