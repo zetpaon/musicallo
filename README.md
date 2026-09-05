@@ -234,7 +234,6 @@ MIT License — свободно используйте в своих проек
 ## 📞 Контакты и обратная связь
 
 - Issues: [GitHub Issues](https://github.com/zetpaon/musicallo/issues)
-- Email: andrey.shatokiy@gmail.com
 
 ---
 
