@@ -1211,7 +1211,7 @@
                 if (!currentTrack) return;
                 const answer = guessInput.value.trim();
                 if (!answer) {
-                    skipToNext(false);
+                    skipToNext();
                     return;
                 }
                 const isCorrect = currentTrack.correctAnswers.some(a => 
@@ -1241,7 +1241,7 @@
                         btnGiveUp.classList.add('show');
                         canGiveUp = true;
                     } else {
-                        skipToNext();
+                        skipToNext(false);
                     }
                 }
             }
