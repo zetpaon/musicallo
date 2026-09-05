@@ -103,8 +103,25 @@
             align-items: center;
             justify-content: space-between;
             gap: 16px;
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto 24px;
+            padding: 10px 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            background: rgba(21,21,34,0.72);
+            box-shadow: 0 12px 36px rgba(0,0,0,0.2);
+            backdrop-filter: blur(20px);
         }
-        .site-navigation, .profile-area { display: flex; align-items: center; gap: 12px; }
+        .site-navigation { display: flex; align-items: center; gap: 12px; }
+        .profile-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 10px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.2);
+        }
         .site-brand {
             color: var(--text);
             font-size: 1.35rem;
@@ -209,7 +226,7 @@
 
         .level-info {
             display: flex; justify-content: center; align-items: center; gap: 12px;
-            margin-top: 12px; flex-wrap: wrap;
+            flex-wrap: wrap;
         }
 
         .level-badge {
@@ -400,12 +417,17 @@
         @media (max-width: 480px) {
             .page { min-height: calc(100vh - 40px); }
             .game-container { padding: 24px 18px 20px; border-radius: 16px; }
-            .site-header { align-items: flex-start; }
+            .site-header { flex-wrap: wrap; gap: 8px; padding: 8px; }
             .site-navigation, .profile-area { gap: 8px; }
             .site-brand { font-size: 1.15rem; }
-            .btn-leaderboard { padding: 7px 9px; font-size: 0.8rem; }
+            .btn-leaderboard { padding: 7px 9px; font-size: 0; }
+            .btn-leaderboard .leaderboard-label { display: none; }
+            .btn-leaderboard .leaderboard-icon { font-size: 1rem; }
+            .profile-area { padding: 6px; }
+            .user-avatar { width: 32px; height: 32px; }
             .user-nickname { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-            .level-info { margin-top: 0; }
+            .level-badge { padding: 3px 8px; font-size: 0.78rem; }
+            .profile-area { margin-left: auto; }
             .game-title { font-size: 1.5rem; }
             .audio-controls { gap: 8px; }
             .btn-play { width: 48px; height: 48px; font-size: 18px; }
@@ -421,12 +443,18 @@
         <header class="site-header">
             <nav class="site-navigation" aria-label="Основная навигация">
                 <a class="site-brand" href="index.html">musicallo</a>
-                <a class="btn-leaderboard" href="leaderboard.html">🏆 Лидерборд</a>
+                <a class="btn-leaderboard" href="leaderboard.html" aria-label="Лидерборд"><span class="leaderboard-icon">🏆</span><span class="leaderboard-label"> Лидерборд</span></a>
             </nav>
             <div class="profile-area">
                 <div class="user-info" id="userInfo"></div>
                 <div class="level-info">
                     <span class="level-badge" id="levelBadge">Уровень 1</span>
+                    <div class="level-progress">
+                        <span id="levelProgressText">0/150</span>
+                        <div class="level-progress-bar">
+                            <div class="level-progress-fill" id="levelProgressFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
@@ -632,6 +660,8 @@
             const progressDividers = document.getElementById('progressDividers');
             const progressTime = document.getElementById('progressTime');
             const levelBadge = document.getElementById('levelBadge');
+            const levelProgressText = document.getElementById('levelProgressText');
+            const levelProgressFill = document.getElementById('levelProgressFill');
             const pointsEarnedSpan = document.getElementById('pointsEarned');
             const totalScoreInResultSpan = document.getElementById('totalScoreInResult');
             const userInfo = document.getElementById('userInfo');
@@ -722,6 +752,8 @@
                     levelBadge.textContent = `Уровень ${info.level}`;
                 }
                 levelBadge.style.backgroundColor = info.color;
+                levelProgressText.textContent = `${totalScore}/${totalScore + info.scoreToNext}`;
+                levelProgressFill.style.width = `${info.progressPercent}%`;
             }
 
             function updateUserInterface() {
