@@ -23,7 +23,7 @@
             --warning: #fdcb6e;
             --shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             --radius: 20px;
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -303,10 +303,10 @@
         @keyframes badgePulse { 0%,100% { box-shadow: 0 0 20px rgba(108,92,231,0.3); } 50% { box-shadow: 0 0 35px rgba(108,92,231,0.6); } }
 
         .progress-bar-container { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin: 8px 0 4px; position: relative; z-index: 1; cursor: pointer; }
-        .progress-bar-opened { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-glow)); border-radius: 4px; box-shadow: 0 0 10px rgba(108,92,231,0.3); transition: width 0.3s ease; }
-        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #fff, #e0e0ff); border-radius: 4px; box-shadow: 0 0 15px rgba(255,255,255,0.8); transition: width 0.1s linear; position: absolute; top: 0; left: 0; }
+        .progress-bar-opened { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-glow)); border-radius: 4px; box-shadow: 0 0 10px rgba(108,92,231,0.3); transition: width var(--transition); }
+        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #fff, #e0e0ff); border-radius: 4px; box-shadow: 0 0 15px rgba(255,255,255,0.8); transition: width 0.18s linear; position: absolute; top: 0; left: 0; }
         .progress-dividers { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-        .progress-divider { position: absolute; top: 0; width: 2px; height: 100%; background: rgba(255,255,255,0.9); box-shadow: 0 0 6px rgba(0,0,0,0.7); transition: left 0.3s ease; }
+        .progress-divider { position: absolute; top: 0; width: 2px; height: 100%; background: rgba(255,255,255,0.9); box-shadow: 0 0 6px rgba(0,0,0,0.7); transition: left var(--transition); }
         .progress-time { text-align: right; font-size: 0.75rem; color: var(--text-dim); letter-spacing: 0.2px; margin-top: 2px; }
         .progress-ring { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; }
         .step-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.15); transition: var(--transition); }
@@ -314,11 +314,11 @@
         .step-dot.completed { background: var(--success); box-shadow: 0 0 8px rgba(0,184,148,0.4); }
 
         .attempt-history { display: grid; gap: 8px; margin-bottom: 20px; }
-        .attempt-history-item { padding: 10px 14px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; color: var(--text-dim); background: rgba(0,0,0,0.2); font-size: 0.85rem; animation: attemptHistoryIn 0.35s ease-out both; }
+        .attempt-history-item { padding: 10px 14px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; color: var(--text-dim); background: rgba(0,0,0,0.2); font-size: 0.85rem; animation: attemptHistoryIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
         .attempt-history-item.skipped { color: var(--accent-glow); }
         .attempt-history-item.guessed { color: var(--warning); }
         @keyframes attemptHistoryIn {
-            from { opacity: 0; transform: translateY(-8px); }
+            from { opacity: 0; transform: translateY(-10px) scale(0.98); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -345,14 +345,14 @@
         .btn-give-up:hover { background: rgba(255,107,107,0.2); box-shadow: 0 8px 30px rgba(255,107,107,0.3); }
 
         .datalist-suggestions { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: #1e1e30; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 15px 40px rgba(0,0,0,0.5); max-height: 180px; overflow-y: auto; z-index: 100; display: none; padding: 6px; }
-        .datalist-suggestions.show { display: block; animation: dropdownIn 0.25s ease-out; }
-        @keyframes dropdownIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        .datalist-suggestions.show { display: block; animation: dropdownIn 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+        @keyframes dropdownIn { from { opacity: 0; transform: translateY(-8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
         .suggestion-item { padding: 10px 14px; border-radius: 8px; cursor: pointer; transition: var(--transition); font-size: 0.9rem; color: var(--text); display: flex; align-items: center; gap: 10px; }
         .suggestion-item:hover { background: rgba(108,92,231,0.2); color: #fff; }
         .suggestion-icon { font-size: 0.8rem; opacity: 0.6; }
 
         .result-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; animation: overlayIn 0.4s ease-out; padding: 20px; }
-        @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes overlayIn { from { opacity: 0; backdrop-filter: blur(0); } to { opacity: 1; backdrop-filter: blur(8px); } }
         .result-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 24px; padding: 36px 28px 28px; max-width: 440px; width: 100%; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(108,92,231,0.15); animation: resultIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
         @keyframes resultIn { from { opacity: 0; transform: scale(0.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .result-icon { font-size: 4rem; margin-bottom: 16px; animation: bounceIcon 1s infinite; }
@@ -1135,7 +1135,7 @@
                     gameContainer.animate([
                         { height: `${previousHeight}px` },
                         { height: `${newHeight}px` }
-                    ], { duration: 350, easing: 'ease-out' });
+                    ], { duration: 450, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
                 }
             }
 
