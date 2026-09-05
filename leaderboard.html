@@ -9,11 +9,15 @@
     <style>
         :root { --bg: #0a0a0f; --card: #151522; --border: #2a2a3e; --accent: #a29bfe; --text: #e0e0e0; --dim: #8888aa; --warning: #fdcb6e; }
         * { box-sizing: border-box; }
-        body { min-height: 100vh; margin: 0; padding: 20px; display: grid; place-items: center; color: var(--text); font-family: 'Segoe UI', 'Inter', sans-serif; background: var(--bg); background-image: radial-gradient(ellipse at 20% 50%, rgba(108,92,231,.12), transparent 60%); }
-        main { width: 100%; max-width: 560px; padding: 32px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
-        header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+        body { min-height: 100vh; margin: 0; padding: 20px; color: var(--text); font-family: 'Segoe UI', 'Inter', sans-serif; background: var(--bg); background-image: radial-gradient(ellipse at 20% 50%, rgba(108,92,231,.12), transparent 60%); }
+        .page { min-height: calc(100vh - 40px); display: flex; flex-direction: column; }
+        .site-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; max-width: 960px; margin: 0 auto 24px; padding: 10px 14px; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; background: rgba(21,21,34,.72); box-shadow: 0 12px 36px rgba(0,0,0,.2); backdrop-filter: blur(20px); }
+        .site-brand { color: var(--text); font-size: 1.35rem; font-weight: 700; letter-spacing: -.5px; text-decoration: none; }
+        .back { padding: 8px 12px; border: 1px solid rgba(108,92,231,.4); border-radius: 10px; color: var(--accent); background: rgba(108,92,231,.12); text-decoration: none; font-weight: 600; }
+        main { width: 100%; max-width: 560px; margin: auto; padding: 32px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+        header { margin-bottom: 24px; }
         h1 { margin: 0; font-size: 1.7rem; }
-        .back { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .page-footer { width: 100%; max-width: 960px; margin: 24px auto 0; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.08); color: var(--dim); font-size: .72rem; text-align: center; }
         ol { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
         .player { display: grid; grid-template-columns: 32px 46px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; background: rgba(255,255,255,.04); }
         .rank { color: var(--accent); font-weight: 700; text-align: center; }
@@ -27,10 +31,17 @@
     </style>
 </head>
 <body>
-    <main>
-        <header><h1>🏆 Лидерборд</h1><a class="back" href="index.html">← Играть</a></header>
-        <ol id="leaderboard" aria-live="polite"><li class="status">Загрузка рейтинга...</li></ol>
-    </main>
+    <div class="page">
+        <header class="site-header">
+            <a class="site-brand" href="index.html">musicallo</a>
+            <a class="back" href="index.html">← Играть</a>
+        </header>
+        <main>
+            <header><h1>🏆 Лидерборд</h1></header>
+            <ol id="leaderboard" aria-live="polite"><li class="status">Загрузка рейтинга...</li></ol>
+        </main>
+        <footer class="page-footer">zetpaon</footer>
+    </div>
     <script>
         const firebaseConfig = { apiKey: "AIzaSyAjaN1dabndg-ccVFGcrxdkuHB9wozyrfw", authDomain: "musicallo-3cd30.firebaseapp.com", projectId: "musicallo-3cd30", storageBucket: "musicallo-3cd30.firebasestorage.app", messagingSenderId: "470668714876", appId: "1:470668714876:web:b26686b92ac4f6c6f87af9" };
         firebase.initializeApp(firebaseConfig);

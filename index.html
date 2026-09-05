@@ -64,6 +64,16 @@
             display: flex;
             flex-direction: column;
         }
+        .page-footer {
+            width: 100%;
+            max-width: 960px;
+            margin: 24px auto 0;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-dim);
+            font-size: 0.72rem;
+            text-align: center;
+        }
 
         .game-container {
             position: relative;
@@ -114,6 +124,20 @@
             backdrop-filter: blur(20px);
         }
         .site-navigation { display: flex; align-items: center; gap: 12px; }
+        .menu-toggle {
+            display: none;
+            width: 36px;
+            height: 36px;
+            border: 1px solid rgba(108,92,231,0.4);
+            border-radius: 10px;
+            background: rgba(108,92,231,0.12);
+            color: var(--accent-glow);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+        .menu-toggle[aria-expanded="true"] { transform: rotate(180deg); background: rgba(108,92,231,0.25); }
+        .mobile-menu { display: none; }
         .profile-area {
             display: flex;
             align-items: center;
@@ -414,20 +438,32 @@
         .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
         .avatar-preview .placeholder { color: #888; }
 
-        @media (max-width: 480px) {
+        @media (max-width: 640px) {
             .page { min-height: calc(100vh - 40px); }
             .game-container { padding: 24px 18px 20px; border-radius: 16px; }
-            .site-header { flex-wrap: wrap; gap: 8px; padding: 8px; }
-            .site-navigation, .profile-area { gap: 8px; }
+            .site-header { gap: 8px; padding: 8px 10px; margin-bottom: 16px; }
+            .site-navigation { gap: 8px; }
             .site-brand { font-size: 1.15rem; }
-            .btn-leaderboard { padding: 7px 9px; font-size: 0; }
-            .btn-leaderboard .leaderboard-label { display: none; }
-            .btn-leaderboard .leaderboard-icon { font-size: 1rem; }
-            .profile-area { padding: 6px; }
-            .user-avatar { width: 32px; height: 32px; }
-            .user-nickname { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-            .level-badge { padding: 3px 8px; font-size: 0.78rem; }
-            .profile-area { margin-left: auto; }
+            .site-header > .site-navigation .btn-leaderboard, .site-header > .profile-area { display: none; }
+            .menu-toggle { display: block; margin-left: auto; }
+            .mobile-menu {
+                display: grid;
+                grid-template-rows: 0fr;
+                width: 100%;
+                max-width: 960px;
+                margin: -10px auto 16px;
+                border: 1px solid transparent;
+                border-radius: 16px;
+                background: rgba(21,21,34,0.9);
+                opacity: 0;
+                overflow: hidden;
+                transition: grid-template-rows var(--transition), opacity var(--transition), border-color var(--transition);
+            }
+            .mobile-menu.open { grid-template-rows: 1fr; border-color: rgba(255,255,255,0.08); opacity: 1; }
+            .mobile-menu-content { min-height: 0; overflow: hidden; }
+            .mobile-menu-inner { display: grid; gap: 14px; padding: 14px; }
+            .mobile-menu .profile-area { justify-content: center; }
+            .mobile-menu .btn-leaderboard { text-align: center; }
             .game-title { font-size: 1.5rem; }
             .audio-controls { gap: 8px; }
             .btn-play { width: 48px; height: 48px; font-size: 18px; }
@@ -457,7 +493,27 @@
                     </div>
                 </div>
             </div>
+            <button class="menu-toggle" id="menuToggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobileMenu">⌄</button>
         </header>
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-content">
+                <div class="mobile-menu-inner">
+                    <div class="profile-area">
+                        <div class="user-info" id="mobileUserInfo"></div>
+                        <div class="level-info">
+                            <span class="level-badge" id="mobileLevelBadge">Уровень 1</span>
+                            <div class="level-progress">
+                                <span id="mobileLevelProgressText">0/150</span>
+                                <div class="level-progress-bar">
+                                    <div class="level-progress-fill" id="mobileLevelProgressFill" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="btn-leaderboard" href="leaderboard.html">🏆 Лидерборд</a>
+                </div>
+            </div>
+        </div>
 
         <div class="game-container" id="gameContainer">
             <div class="game-header">
@@ -479,6 +535,7 @@
                     <div class="track-name">Неизвестный трек</div>
                     <div class="track-artist">Слушай внимательно...</div>
                 </div>
+                <footer class="page-footer">zetpaon</footer>
             </div>
 
             <div class="audio-controls">
@@ -662,9 +719,13 @@
             const levelBadge = document.getElementById('levelBadge');
             const levelProgressText = document.getElementById('levelProgressText');
             const levelProgressFill = document.getElementById('levelProgressFill');
+            const mobileLevelBadge = document.getElementById('mobileLevelBadge');
+            const mobileLevelProgressText = document.getElementById('mobileLevelProgressText');
+            const mobileLevelProgressFill = document.getElementById('mobileLevelProgressFill');
             const pointsEarnedSpan = document.getElementById('pointsEarned');
             const totalScoreInResultSpan = document.getElementById('totalScoreInResult');
             const userInfo = document.getElementById('userInfo');
+            const mobileUserInfo = document.getElementById('mobileUserInfo');
             const errorOverlay = document.getElementById('errorOverlay');
             const btnRetry = document.getElementById('btnRetry');
             const authModal = document.getElementById('authModal');
@@ -685,6 +746,8 @@
             const btnLogout = document.getElementById('btnLogout');
             const infoMessage = document.getElementById('infoMessage');
             const btnInfoRetry = document.getElementById('btnInfoRetry');
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
 
             const levelThresholds = {
                 base: 150,
@@ -754,36 +817,41 @@
                 levelBadge.style.backgroundColor = info.color;
                 levelProgressText.textContent = `${totalScore}/${totalScore + info.scoreToNext}`;
                 levelProgressFill.style.width = `${info.progressPercent}%`;
+                mobileLevelBadge.textContent = levelBadge.textContent;
+                mobileLevelBadge.style.backgroundColor = info.color;
+                mobileLevelProgressText.textContent = levelProgressText.textContent;
+                mobileLevelProgressFill.style.width = `${info.progressPercent}%`;
             }
 
             function updateUserInterface() {
-                userInfo.innerHTML = '';
-                if (currentAuthUser) {
-                    const userAvatar = document.createElement('div');
-                    userAvatar.className = 'user-avatar';
-                    if (userData?.avatarUrl) {
-                        userAvatar.innerHTML = `<img src="${userData.avatarUrl}" alt="avatar"><div class="edit-avatar-icon">✏️</div>`;
+                [userInfo, mobileUserInfo].forEach(container => {
+                    container.innerHTML = '';
+                    if (currentAuthUser) {
+                        const userAvatar = document.createElement('div');
+                        userAvatar.className = 'user-avatar';
+                        if (userData?.avatarUrl) {
+                            userAvatar.innerHTML = `<img src="${userData.avatarUrl}" alt="avatar"><div class="edit-avatar-icon">✏️</div>`;
+                        } else {
+                            userAvatar.innerHTML = `<span style="font-size:18px;">👤</span><div class="edit-avatar-icon">✏️</div>`;
+                        }
+                        userAvatar.addEventListener('click', openEditModal);
+
+                        const nick = document.createElement('span');
+                        nick.className = 'user-nickname';
+                        nick.innerHTML = `${userData?.nickname || currentAuthUser.email} <span class="edit-nick-icon">✏️</span>`;
+                        nick.addEventListener('click', openEditModal);
+
+                        container.appendChild(userAvatar);
+                        container.appendChild(nick);
                     } else {
-                        userAvatar.innerHTML = `<span style="font-size:18px;">👤</span><div class="edit-avatar-icon">✏️</div>`;
+                        const btnLogin = document.createElement('button');
+                        btnLogin.className = 'btn-login';
+                        btnLogin.textContent = 'Войти / Регистрация';
+                        btnLogin.addEventListener('click', () => authModal.classList.remove('hidden'));
+                        container.appendChild(btnLogin);
                     }
-                    userAvatar.addEventListener('click', openEditModal);
-
-                    const nick = document.createElement('span');
-                    nick.className = 'user-nickname';
-                    nick.innerHTML = `${userData?.nickname || currentAuthUser.email} <span class="edit-nick-icon">✏️</span>`;
-                    nick.addEventListener('click', openEditModal);
-
-                    userInfo.appendChild(userAvatar);
-                    userInfo.appendChild(nick);
-                } else {
-                    const btnLogin = document.createElement('button');
-                    btnLogin.className = 'btn-login';
-                    btnLogin.textContent = 'Войти / Регистрация';
-                    btnLogin.addEventListener('click', () => authModal.classList.remove('hidden'));
-                    userInfo.appendChild(btnLogin);
-                }
+                });
             }
-
             function openEditModal() {
                 if (!currentAuthUser) return;
                 avatarUrlInput.value = userData?.avatarUrl || '';
@@ -1330,6 +1398,10 @@
             volumeSlider.addEventListener('input', () => { currentVolume = volumeSlider.value; audioPlayer.volume = currentVolume; });
             btnRestart.addEventListener('click', resetGame);
             resultOverlay.addEventListener('click', e => { if (e.target === resultOverlay) resetGame(); });
+            menuToggle.addEventListener('click', () => {
+                const isOpen = mobileMenu.classList.toggle('open');
+                menuToggle.setAttribute('aria-expanded', isOpen);
+            });
 
             loadTracks();
             guessInput.focus();
