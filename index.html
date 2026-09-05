@@ -205,6 +205,28 @@
         .level-progress-bar { width: 100px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
         .level-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-glow)); transition: width 0.5s ease; }
 
+        .leaderboard {
+            margin: 20px 0;
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            background: rgba(0,0,0,0.22);
+        }
+        .leaderboard-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; text-align: left; }
+        .leaderboard-list { list-style: none; display: grid; gap: 8px; }
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.04);
+        }
+        .leaderboard-rank { width: 24px; color: var(--accent-glow); font-weight: 700; text-align: center; }
+        .leaderboard-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .leaderboard-score { color: var(--warning); font-weight: 700; white-space: nowrap; }
+        .leaderboard-status { color: var(--text-dim); font-size: 0.85rem; text-align: center; }
+
         .audio-card { background: rgba(0,0,0,0.35); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; }
         .track-info { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
         .track-icon { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), #4834d4); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 4px 20px rgba(108,92,231,0.4); animation: pulse-icon 2s infinite; }
@@ -403,6 +425,13 @@
                         <div class="level-progress-fill" id="levelProgressFill" style="width: 0%;"></div>
                     </div>
                 </div>
+
+                <section class="leaderboard" aria-labelledby="leaderboardTitle">
+                    <h2 class="leaderboard-title" id="leaderboardTitle">🏆 Лидерборд</h2>
+                    <ol class="leaderboard-list" id="leaderboardList" aria-live="polite">
+                        <li class="leaderboard-status">Загрузка рейтинга...</li>
+                    </ol>
+                </section>
             </div>
         </div>
 
@@ -618,6 +647,7 @@
             const btnLogout = document.getElementById('btnLogout');
             const infoMessage = document.getElementById('infoMessage');
             const btnInfoRetry = document.getElementById('btnInfoRetry');
+            const leaderboardList = document.getElementById('leaderboardList');
 
             const levelThresholds = {
                 base: 150,
@@ -784,8 +814,57 @@
                 if (currentAuthUser) {
                     db.collection('users').doc(currentAuthUser.uid).set({
                         score: totalScore
-                    }, { merge: true });
+                    }, { merge: true }).then(loadLeaderboard).catch(error => {
+                        console.error('Ошибка сохранения рейтинга:', error);
+                    });
                 }
+            }
+
+            function loadLeaderboard() {
+                leaderboardList.textContent = '';
+                const loadingItem = document.createElement('li');
+                loadingItem.className = 'leaderboard-status';
+                loadingItem.textContent = 'Загрузка рейтинга...';
+                leaderboardList.appendChild(loadingItem);
+
+                db.collection('users').orderBy('score', 'desc').limit(10).get().then(snapshot => {
+                    leaderboardList.textContent = '';
+                    if (snapshot.empty) {
+                        const emptyItem = document.createElement('li');
+                        emptyItem.className = 'leaderboard-status';
+                        emptyItem.textContent = 'Пока нет участников';
+                        leaderboardList.appendChild(emptyItem);
+                        return;
+                    }
+
+                    snapshot.forEach((doc, index) => {
+                        const user = doc.data();
+                        const item = document.createElement('li');
+                        item.className = 'leaderboard-item';
+
+                        const rank = document.createElement('span');
+                        rank.className = 'leaderboard-rank';
+                        rank.textContent = index + 1;
+
+                        const name = document.createElement('span');
+                        name.className = 'leaderboard-name';
+                        name.textContent = user.nickname || 'Игрок';
+
+                        const score = document.createElement('span');
+                        score.className = 'leaderboard-score';
+                        score.textContent = `${Number(user.score) || 0} очк.`;
+
+                        item.append(rank, name, score);
+                        leaderboardList.appendChild(item);
+                    });
+                }).catch(error => {
+                    console.error('Ошибка загрузки лидерборда:', error);
+                    leaderboardList.textContent = '';
+                    const errorItem = document.createElement('li');
+                    errorItem.className = 'leaderboard-status';
+                    errorItem.textContent = 'Не удалось загрузить рейтинг';
+                    leaderboardList.appendChild(errorItem);
+                });
             }
 
             auth.onAuthStateChanged(user => {
@@ -802,6 +881,7 @@
                     updateUserInterface();
                     maybeSelectTrack();
                 }
+                loadLeaderboard();
             });
 
             let isLoginMode = true;
@@ -1248,6 +1328,7 @@
             resultOverlay.addEventListener('click', e => { if (e.target === resultOverlay) resetGame(); });
 
             loadTracks();
+            loadLeaderboard();
             guessInput.focus();
         })();
     </script>
