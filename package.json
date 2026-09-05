@@ -1,0 +1,43 @@
+{
+  "name": "musicallo",
+  "version": "1.0.0",
+  "description": "Interactive music guessing game - Угадай трек",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server -p 8000 -c-1",
+    "dev": "http-server -p 8000 -c-1 --cors",
+    "build": "echo 'Build script to be implemented'",
+    "test": "echo 'Test script to be implemented'",
+    "lint": "eslint src/",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "music",
+    "game",
+    "guessing",
+    "music-guessing-game",
+    "interactive",
+    "firebase"
+  ],
+  "author": "zetpaon",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zetpaon/musicallo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zetpaon/musicallo/issues"
+  },
+  "homepage": "https://zetpaon.github.io/musicallo/",
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.3",
+    "http-server": "^14.1.1"
+  },
+  "dependencies": {
+    "firebase": "^10.10.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
