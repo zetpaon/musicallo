@@ -92,7 +92,22 @@
         .game-container.success-flash { border-color: var(--success); box-shadow: 0 0 60px rgba(0,184,148,0.3), var(--shadow); }
         .game-container.fail-flash { border-color: var(--error); box-shadow: 0 0 60px rgba(255,107,107,0.3), var(--shadow); }
 
-        .game-header { text-align: center; margin-bottom: 28px; }
+        .game-header { margin-bottom: 28px; }
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 26px;
+        }
+        .site-navigation, .profile-area { display: flex; align-items: center; gap: 12px; }
+        .site-brand {
+            color: var(--text);
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
 
         .game-title {
             font-size: 2rem; font-weight: 700; letter-spacing: -0.5px;
@@ -106,10 +121,7 @@
         .user-info {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 12px;
-            flex-wrap: wrap;
+            gap: 8px;
             position: relative;
         }
 
@@ -207,8 +219,7 @@
 
         .btn-leaderboard {
             display: inline-block;
-            margin-top: 16px;
-            padding: 9px 16px;
+            padding: 8px 12px;
             border: 1px solid rgba(108,92,231,0.4);
             border-radius: 10px;
             color: var(--accent-glow);
@@ -384,6 +395,12 @@
 
         @media (max-width: 480px) {
             .game-container { padding: 24px 18px 20px; border-radius: 16px; }
+            .site-header { align-items: flex-start; }
+            .site-navigation, .profile-area { gap: 8px; }
+            .site-brand { font-size: 1.15rem; }
+            .btn-leaderboard { padding: 7px 9px; font-size: 0.8rem; }
+            .user-nickname { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .level-info { margin-top: 0; }
             .game-title { font-size: 1.5rem; }
             .audio-controls { gap: 8px; }
             .btn-play { width: 48px; height: 48px; font-size: 18px; }
@@ -398,10 +415,20 @@
 
     <div class="game-container" id="gameContainer">
         <div class="game-header">
+            <header class="site-header">
+                <nav class="site-navigation" aria-label="Основная навигация">
+                    <a class="site-brand" href="index.html">musicallo</a>
+                    <a class="btn-leaderboard" href="leaderboard.html">🏆 Лидерборд</a>
+                </nav>
+                <div class="profile-area">
+                    <div class="user-info" id="userInfo"></div>
+                    <div class="level-info">
+                        <span class="level-badge" id="levelBadge">Уровень 1</span>
+                    </div>
+                </div>
+            </header>
             <h1 class="game-title">🎵 Угадай трек</h1>
             <p class="game-subtitle">Слушай фрагмент и попробуй угадать название</p>
-
-            <div class="user-info" id="userInfo"></div>
 
             <!-- Информационное сообщение (по умолчанию скрыто) -->
             <div class="info-message hidden" id="infoMessage">
@@ -409,17 +436,6 @@
                 <button id="btnInfoRetry">Проверить снова</button>
             </div>
 
-            <div class="level-info">
-                <span class="level-badge" id="levelBadge">Уровень 1</span>
-                <div class="level-progress">
-                    <span id="levelProgressText">0/150</span>
-                    <div class="level-progress-bar">
-                        <div class="level-progress-fill" id="levelProgressFill" style="width: 0%;"></div>
-                    </div>
-                </div>
-
-            </div>
-            <a class="btn-leaderboard" href="leaderboard.html">🏆 Лидерборд</a>
         </div>
 
         <div class="audio-card">
@@ -609,8 +625,6 @@
             const progressDividers = document.getElementById('progressDividers');
             const progressTime = document.getElementById('progressTime');
             const levelBadge = document.getElementById('levelBadge');
-            const levelProgressText = document.getElementById('levelProgressText');
-            const levelProgressFill = document.getElementById('levelProgressFill');
             const pointsEarnedSpan = document.getElementById('pointsEarned');
             const totalScoreInResultSpan = document.getElementById('totalScoreInResult');
             const userInfo = document.getElementById('userInfo');
@@ -701,8 +715,6 @@
                     levelBadge.textContent = `Уровень ${info.level}`;
                 }
                 levelBadge.style.backgroundColor = info.color;
-                levelProgressText.textContent = `${totalScore}/${totalScore + info.scoreToNext}`;
-                levelProgressFill.style.width = `${info.progressPercent}%`;
             }
 
             function updateUserInterface() {
