@@ -486,6 +486,7 @@
         <header class="site-header">
             <nav class="site-navigation" aria-label="Основная навигация">
                 <a class="site-brand" href="index.html">musicallo</a>
+                <a class="btn-leaderboard" href="packs.html">📦 Паки</a>
                 <a class="btn-leaderboard" href="leaderboard.html" aria-label="Лидерборд"><span class="leaderboard-icon">🏆</span><span class="leaderboard-label"> Лидерборд</span></a>
             </nav>
             <div class="profile-area">
@@ -518,6 +519,7 @@
                         </div>
                     </div>
                     <a class="btn-leaderboard" href="leaderboard.html">🏆 Лидерборд</a>
+                    <a class="btn-leaderboard" href="packs.html">📦 Паки</a>
                 </div>
             </div>
         </div>
@@ -665,7 +667,7 @@
             const auth = firebase.auth();
             const db = firebase.firestore();
 
-            const TRACKS_URL = 'https://raw.githubusercontent.com/zetpaon/musicallo/refs/heads/data/tracks.json';
+            const DEFAULT_TRACKS_URL = 'https://raw.githubusercontent.com/zetpaon/musicallo/refs/heads/data/tracks.json';
             const DURATIONS = [0.1, 0.5, 1, 2, 3, 5, 8];
             const SCORES = [100, 50, 25, 15, 10, 7, 5];
             const MAX_ATTEMPTS = DURATIONS.length - 1;
@@ -693,6 +695,7 @@
             let userData = null;
             let tracksLoaded = false;
             let userDataLoaded = false;
+            let activePack = null;
 
             const audioPlayer = document.getElementById('audioPlayer');
             const btnPlay = document.getElementById('btnPlay');
@@ -984,9 +987,17 @@
 
             async function loadTracks() {
                 try {
-                    const response = await fetch(TRACKS_URL);
-                    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-                    const data = await response.json();
+                    const storedPack = localStorage.getItem('musicalloSelectedPack');
+                    try {
+                        activePack = storedPack ? JSON.parse(storedPack) : null;
+                    } catch {
+                        localStorage.removeItem('musicalloSelectedPack');
+                        activePack = null;
+                    }
+                    const data = activePack ? { tracks: activePack.tracks } : await fetch(DEFAULT_TRACKS_URL).then(response => {
+                        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+                        return response.json();
+                    });
                     if (!Array.isArray(data.tracks) || data.tracks.length === 0) {
                         throw new Error('Неверный формат данных: отсутствует массив tracks');
                     }

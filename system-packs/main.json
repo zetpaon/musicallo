@@ -1,0 +1,8 @@
+{
+  "id": "system-main",
+  "name": "Основной",
+  "description": "Классический набор треков musicallo.",
+  "icon": "🎵",
+  "color": "#6c5ce7",
+  "tracksUrl": "https://raw.githubusercontent.com/zetpaon/musicallo/refs/heads/data/tracks.json"
+}
