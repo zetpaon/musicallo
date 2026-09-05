@@ -9,95 +9,101 @@
   
   <!-- Stylesheets -->
   <link rel="stylesheet" href="src/css/styles.css">
+  <link rel="stylesheet" href="src/css/enhanced-ui.css">
   
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>♪</text></svg>">
 </head>
 <body>
+  <!-- Notifications Container -->
+  <div id="notifications-container"></div>
+
   <!-- Header -->
-  <header>
-    <div class="header-content">
-      <a href="/" class="logo">Musicallo</a>
+  <header class="header">
+    <div class="header-content flex flex-between">
+      <a href="/" class="logo">🎵 Musicallo</a>
       
-      <nav id="nav-menu">
-        <ul class="nav-links">
-          <li><a href="#play">Играть</a></li>
-          <li><a href="#leaderboard">Рейтинг</a></li>
-          <li><a href="#about">О игре</a></li>
+      <nav id="nav-menu" class="nav-menu">
+        <ul class="nav-links flex gap-4">
+          <li><a href="#play" class="nav-link">Играть</a></li>
+          <li><a href="#leaderboard" class="nav-link">Рейтинг</a></li>
+          <li><a href="#achievements" class="nav-link">Достижения</a></li>
+          <li><a href="#about" class="nav-link">О игре</a></li>
         </ul>
       </nav>
 
-      <div class="user-info">
-        <div class="user-avatar" id="profile-btn" title="Профиль">
+      <div class="user-info flex flex-between gap-2">
+        <button id="profile-btn" class="user-avatar" title="Профиль">
           <span id="current-nickname">Guest</span>
-        </div>
+        </button>
         <button id="logout-btn" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Выход</button>
       </div>
     </div>
   </header>
 
   <!-- Auth Container -->
-  <div id="auth-container">
-    <div class="auth-box">
-      <h1 class="auth-title">♪ Musicallo</h1>
+  <div id="auth-container" class="auth-container">
+    <div class="card modal-md" style="margin: 2rem auto; max-width: 400px;">
+      <h1 class="text-center mb-4">♪ Musicallo</h1>
+      <p class="text-center mb-4" style="color: var(--text-secondary);">Угадай песню по фрагменту аудио</p>
       
       <!-- Login Form -->
       <form id="login-form" style="display: none;">
         <div class="form-group">
-          <label for="login-email">Email</label>
-          <input type="email" id="login-email" placeholder="you@example.com" required>
+          <label for="login-email" class="form-label">Email</label>
+          <input type="email" id="login-email" class="form-control" placeholder="you@example.com" required>
         </div>
 
         <div class="form-group">
-          <label for="login-password">Пароль</label>
-          <input type="password" id="login-password" placeholder="••••••••" required>
+          <label for="login-password" class="form-label">Пароль</label>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
         </div>
 
-        <div id="auth-error-msg" class="auth-error-msg"></div>
+        <div id="auth-error-msg" class="alert alert-error" style="display: none;"></div>
 
-        <button type="button" id="login-submit" class="btn btn-primary">Войти</button>
+        <button type="button" id="login-submit" class="btn btn-primary" style="width: 100%;">Войти</button>
       </form>
 
       <!-- Register Form (shown by default) -->
       <form id="register-form">
         <div class="form-group">
-          <label for="register-email">Email</label>
-          <input type="email" id="register-email" placeholder="you@example.com" required>
+          <label for="register-email" class="form-label">Email</label>
+          <input type="email" id="register-email" class="form-control" placeholder="you@example.com" required>
         </div>
 
         <div class="form-group">
-          <label for="register-password">Пароль</label>
-          <input type="password" id="register-password" placeholder="Минимум 6 символов" required>
+          <label for="register-password" class="form-label">Пароль</label>
+          <input type="password" id="register-password" class="form-control" placeholder="Минимум 6 символов" required>
         </div>
 
         <div class="form-group">
-          <label for="register-confirm-password">Подтвердите пароль</label>
-          <input type="password" id="register-confirm-password" placeholder="••••••••" required>
+          <label for="register-confirm-password" class="form-label">Подтвердите пароль</label>
+          <input type="password" id="register-confirm-password" class="form-control" placeholder="••••••••" required>
         </div>
 
-        <div id="auth-error-msg" class="auth-error-msg"></div>
+        <div id="auth-error-msg" class="alert alert-error" style="display: none;"></div>
 
-        <button type="button" id="register-submit" class="btn btn-primary">Зарегистрироваться</button>
+        <button type="button" id="register-submit" class="btn btn-primary" style="width: 100%;">Зарегистрироваться</button>
       </form>
 
       <!-- Toggle Auth Mode -->
-      <div class="auth-footer">
-        <button type="button" id="toggle-auth-btn">Уже есть аккаунт? Войти</button>
+      <div class="auth-footer text-center mt-4">
+        <button type="button" id="toggle-auth-btn" class="btn btn-ghost">Уже есть аккаунт? Войти</button>
       </div>
     </div>
   </div>
 
   <!-- Game Container -->
-  <div id="game-container">
+  <div id="game-container" class="hidden">
     <div class="container">
-      <div class="game-wrapper">
+      <div class="game-wrapper grid grid-2" style="gap: 2rem; margin: 2rem 0;">
         <!-- Main Game Screen -->
-        <main id="game-screen" class="game-screen">
-          <div class="game-header">
-            <div class="game-title">Угадай песню</div>
-            <div class="game-attempts">
-              <span>Попытки:</span>
-              <div class="attempt-indicator">
+        <main id="game-screen" class="game-screen card">
+          <div class="card-header">
+            <h2>Угадай песню</h2>
+            <div class="game-attempts flex gap-2" style="align-items: center;">
+              <span style="font-size: 0.9rem;">Попытки:</span>
+              <div class="attempt-indicator flex gap-1">
                 <span class="attempt-dot active" id="attempt-0"></span>
                 <span class="attempt-dot" id="attempt-1"></span>
                 <span class="attempt-dot" id="attempt-2"></span>
@@ -105,121 +111,183 @@
             </div>
           </div>
 
-          <!-- Audio Player -->
-          <div class="audio-player">
-            <div class="duration-display">
-              <span id="current-duration">0</span>ms / <span id="max-duration">0</span>ms
-              <small>Слушай песню и угадай её название</small>
+          <div class="card-body">
+            <!-- Audio Player -->
+            <div class="audio-player card" style="background: var(--bg-tertiary); padding: 1.5rem; text-align: center;">
+              <div class="duration-display mb-2">
+                <div style="font-size: 0.9rem; color: var(--text-secondary);">Слушай песню и угадай её название</div>
+                <small style="color: var(--text-tertiary);">
+                  <span id="current-duration">0</span>ms / <span id="max-duration">0</span>ms
+                </small>
+              </div>
+              <button id="play-btn" class="btn btn-primary" style="width: 100%; justify-content: center;">▶ Слушать</button>
             </div>
-            <button id="play-btn" class="play-btn" title="Воспроизвести">▶</button>
-          </div>
 
-          <!-- Guess Section -->
-          <div class="guess-section">
-            <label class="guess-label">Введите название песни или исполнителя:</label>
-            <div class="guess-input-wrapper">
-              <input 
-                type="text" 
-                id="guess-input" 
-                placeholder="Например: 'Bohemian Rhapsody' или 'Queen'"
-                autocomplete="off"
-              >
-              <div id="suggestions"></div>
+            <!-- Guess Section -->
+            <div class="guess-section mt-4">
+              <label class="form-label">Введите название песни или исполнителя:</label>
+              <div class="guess-input-wrapper" style="position: relative;">
+                <input 
+                  type="text" 
+                  id="guess-input" 
+                  class="form-control"
+                  placeholder="Например: 'Bohemian Rhapsody' или 'Queen'"
+                  autocomplete="off"
+                >
+                <div id="suggestions" class="suggestions-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 var(--radius-lg) var(--radius-lg); max-height: 200px; overflow-y: auto; display: none; z-index: 1000;"></div>
+              </div>
+              <button type="button" id="submit-guess" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Проверить</button>
             </div>
-            <button type="button" id="submit-guess" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">Проверить</button>
-          </div>
 
-          <!-- Action Buttons -->
-          <div class="button-group">
-            <button type="button" id="skip-btn" class="btn btn-skip">Пропустить (+услышать)</button>
-            <button type="button" id="give-up-btn" class="btn btn-give-up">Сдаться</button>
-          </div>
+            <!-- Action Buttons -->
+            <div class="button-group flex gap-2 mt-4">
+              <button type="button" id="skip-btn" class="btn btn-outline" style="flex: 1;">Пропустить (+услышать)</button>
+              <button type="button" id="give-up-btn" class="btn btn-outline" style="flex: 1;">Сдаться</button>
+            </div>
 
-          <!-- Result Message -->
-          <div id="result-message" class="result-message"></div>
+            <!-- Result Message -->
+            <div id="result-message" class="result-message mt-4"></div>
+          </div>
         </main>
 
-        <!-- Stats Sidebar -->
+        <!-- Right Sidebar -->
         <aside class="stats-sidebar">
-          <div class="stats-title">Ваша статистика</div>
-
-          <div class="stat-item">
-            <span class="stat-label">Уровень</span>
-            <span class="stat-value" id="level">1</span>
-          </div>
-
-          <div class="stat-item">
-            <span class="stat-label">Очки</span>
-            <span class="stat-value" id="score">0</span>
-          </div>
-
-          <div class="stat-item">
-            <span class="stat-label">Текущая попытка</span>
-            <span class="stat-value" id="attempt">0</span>
-          </div>
-
-          <div class="stat-item">
-            <span class="stat-label">Очки за этот трек</span>
-            <span class="stat-value" id="points">0</span>
-          </div>
-
-          <div class="progress-section">
-            <span class="stat-label">Прогресс до следующего уровня</span>
-            <div class="progress-bar">
-              <div class="progress-fill" id="progress-bar" style="width: 0%"></div>
+          <!-- Stats Card -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3>Ваша статистика</h3>
             </div>
-            <small style="color: var(--text-muted);">
-              Ещё <span id="score-to-next">0</span> очков
-            </small>
+            <div class="card-body">
+              <div class="stat-item mb-2">
+                <div style="display: flex; justify-content: space-between;">
+                  <span class="stat-label" style="color: var(--text-secondary);">Уровень</span>
+                  <span class="stat-value" id="level" style="font-weight: 700; color: var(--primary-color);">1</span>
+                </div>
+              </div>
+
+              <div class="stat-item mb-2">
+                <div style="display: flex; justify-content: space-between;">
+                  <span class="stat-label" style="color: var(--text-secondary);">Очки</span>
+                  <span class="stat-value" id="score" style="font-weight: 700; color: var(--secondary-color);">0</span>
+                </div>
+              </div>
+
+              <div class="stat-item mb-2">
+                <div style="display: flex; justify-content: space-between;">
+                  <span class="stat-label" style="color: var(--text-secondary);">Текущая попытка</span>
+                  <span class="stat-value" id="attempt" style="font-weight: 700;">0</span>
+                </div>
+              </div>
+
+              <div class="stat-item">
+                <div style="display: flex; justify-content: space-between;">
+                  <span class="stat-label" style="color: var(--text-secondary);">Очки за трек</span>
+                  <span class="stat-value" id="points" style="font-weight: 700; color: var(--success-color);">0</span>
+                </div>
+              </div>
+
+              <div class="progress-section mt-4">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                  <span class="stat-label" style="color: var(--text-secondary);">Прогресс до уровня</span>
+                  <small style="color: var(--text-tertiary);">
+                    Ещё <span id="score-to-next">0</span> очков
+                  </small>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card">
+            <div class="card-header">
+              <h3>Быстрые действия</h3>
+            </div>
+            <div class="card-body">
+              <button id="next-game-btn" class="btn btn-primary" style="width: 100%; margin-bottom: 0.5rem;">Следующая песня</button>
+              <button id="leaderboard-btn" class="btn btn-secondary" style="width: 100%; margin-bottom: 0.5rem;">Рейтинг</button>
+              <button id="achievements-btn" class="btn btn-outline" style="width: 100%;">Достижения</button>
+            </div>
           </div>
         </aside>
+      </div>
+
+      <!-- Leaderboard Section -->
+      <div id="leaderboard-section" class="card mt-4" style="display: none;">
+        <div class="card-header">
+          <h2>Глобальный Рейтинг</h2>
+          <div class="tabs" style="margin: 1rem 0; border: none;">
+            <button class="tab-button active" data-tab="global">Глобальный</button>
+            <button class="tab-button" data-tab="weekly">За неделю</button>
+            <button class="tab-button" data-tab="accuracy">По точности</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="global-leaderboard" class="tab-content active">
+            <div id="leaderboard-content"></div>
+          </div>
+          <div id="weekly-leaderboard" class="tab-content">
+            <div id="weekly-leaderboard-content"></div>
+          </div>
+          <div id="accuracy-leaderboard" class="tab-content">
+            <div id="accuracy-leaderboard-content"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Achievements Section -->
+      <div id="achievements-section" class="card mt-4" style="display: none;">
+        <div class="card-header">
+          <h2>Достижения</h2>
+        </div>
+        <div class="card-body">
+          <div class="achievement-grid" id="achievements-grid"></div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Profile Modal -->
-  <div id="profile-modal" class="modal">
-    <div class="modal-content">
+  <div id="profile-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal modal-md">
       <div class="modal-header">
         <h2 class="modal-title">Профиль</h2>
-        <button type="button" id="close-profile" class="modal-close">&times;</button>
+        <button type="button" id="close-profile" class="modal-close">×</button>
       </div>
 
-      <div class="profile-avatar">
-        <img id="current-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='30' r='20' fill='%23fff'/%3E%3Cpath d='M 10 100 Q 10 70 50 70 Q 90 70 90 100' fill='%23fff'/%3E%3C/svg%3E" alt="Аватар" style="width: 100%; height: 100%; border-radius: 50%;">
-      </div>
-
-      <div style="text-align: center; margin-bottom: 1.5rem;">
-        <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Текущий пользователь</p>
-        <p style="font-size: 1.2rem; font-weight: bold;" id="current-nickname-display">Guest</p>
-      </div>
-
-      <form id="profile-form">
-        <div class="form-group">
-          <label for="nickname-input">Ник</label>
-          <input type="text" id="nickname-input" placeholder="Ваш никнейм" maxlength="30" required>
+      <div class="modal-body">
+        <div class="text-center mb-4">
+          <div class="profile-avatar" style="width: 80px; height: 80px; margin: 0 auto 1rem; background: var(--bg-tertiary); border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img id="current-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='30' r='20' fill='%236366f1'/%3E%3Cpath d='M 10 100 Q 10 60 50 60 Q 90 60 90 100' fill='%236366f1'/%3E%3C/svg%3E" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Текущий пользователь</p>
+          <p style="font-size: 1.2rem; font-weight: bold;" id="current-nickname-display">Guest</p>
         </div>
 
-        <div class="form-group">
-          <label for="avatar-input">URL аватара (опционально)</label>
-          <input type="url" id="avatar-input" placeholder="https://example.com/avatar.jpg">
-        </div>
+        <form id="profile-form">
+          <div class="form-group">
+            <label for="nickname-input" class="form-label">Ник</label>
+            <input type="text" id="nickname-input" class="form-control" placeholder="Ваш никнейм" maxlength="30" required>
+          </div>
 
-        <div id="profile-error" class="auth-error-msg"></div>
+          <div class="form-group">
+            <label for="avatar-input" class="form-label">URL аватара (опционально)</label>
+            <input type="url" id="avatar-input" class="form-control" placeholder="https://example.com/avatar.jpg">
+          </div>
 
-        <button type="button" id="save-profile" class="btn btn-primary">Сохранить</button>
-      </form>
+          <div id="profile-error" class="alert alert-error" style="display: none;"></div>
+
+          <button type="button" id="save-profile" class="btn btn-primary" style="width: 100%;">Сохранить</button>
+        </form>
+      </div>
     </div>
   </div>
 
   <!-- Loading Spinner -->
-  <div id="loading-spinner">
-    <div class="spinner"></div>
-  </div>
-
-  <!-- Error Container -->
-  <div id="error-container">
-    <span id="error-message"></span>
+  <div id="loading-spinner" class="hidden" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1050;">
+    <div class="spinner spinner-lg"></div>
   </div>
 
   <!-- Scripts -->
