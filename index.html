@@ -765,15 +765,29 @@
                         const userAvatar = document.createElement('div');
                         userAvatar.className = 'user-avatar';
                         if (userData?.avatarUrl) {
-                            userAvatar.innerHTML = `<img src="${userData.avatarUrl}" alt="avatar"><div class="edit-avatar-icon">✏️</div>`;
+                            const image = document.createElement('img');
+                            image.src = userData.avatarUrl;
+                            image.alt = 'avatar';
+                            userAvatar.appendChild(image);
                         } else {
-                            userAvatar.innerHTML = `<span style="font-size:18px;">👤</span><div class="edit-avatar-icon">✏️</div>`;
+                            const placeholder = document.createElement('span');
+                            placeholder.style.fontSize = '18px';
+                            placeholder.textContent = '👤';
+                            userAvatar.appendChild(placeholder);
                         }
+                        const editAvatarIcon = document.createElement('div');
+                        editAvatarIcon.className = 'edit-avatar-icon';
+                        editAvatarIcon.textContent = '✏️';
+                        userAvatar.appendChild(editAvatarIcon);
                         userAvatar.addEventListener('click', openEditModal);
 
                         const nick = document.createElement('span');
                         nick.className = 'user-nickname';
-                        nick.innerHTML = `${userData?.nickname || currentAuthUser.email} <span class="edit-nick-icon">✏️</span>`;
+                        nick.textContent = `${userData?.nickname || currentAuthUser.email} `;
+                        const editNickIcon = document.createElement('span');
+                        editNickIcon.className = 'edit-nick-icon';
+                        editNickIcon.textContent = '✏️';
+                        nick.appendChild(editNickIcon);
                         nick.addEventListener('click', openEditModal);
 
                         container.appendChild(userAvatar);
@@ -797,10 +811,17 @@
 
             function updateAvatarPreview() {
                 const url = avatarUrlInput.value.trim();
+                avatarPreview.textContent = '';
                 if (url) {
-                    avatarPreview.innerHTML = `<img src="${url}" alt="preview">`;
+                    const image = document.createElement('img');
+                    image.src = url;
+                    image.alt = 'preview';
+                    avatarPreview.appendChild(image);
                 } else {
-                    avatarPreview.innerHTML = `<span class="placeholder">👤</span>`;
+                    const placeholder = document.createElement('span');
+                    placeholder.className = 'placeholder';
+                    placeholder.textContent = '👤';
+                    avatarPreview.appendChild(placeholder);
                 }
             }
 
@@ -865,14 +886,24 @@
             function syncLeaderboard() {
                 if (!currentAuthUser) return Promise.resolve();
                 const nickname = (userData?.nickname || '').trim();
-                const publicNickname = nickname && nickname !== currentAuthUser.email ? nickname.slice(0, 16) : 'Игрок';
+                const publicNickname = nickname && nickname !== currentAuthUser.email ? truncateUtf8(nickname, 32) : 'Игрок';
                 return db.collection('leaderboard').doc(currentAuthUser.uid).set({
                     nickname: publicNickname,
-                    avatarUrl: (userData?.avatarUrl || '').slice(0, 2048),
+                    avatarUrl: truncateUtf8(userData?.avatarUrl || '', 2048),
                     score: Number(totalScore) || 0
                 }).catch(error => {
                     console.error('Ошибка обновления лидерборда:', error);
                 });
+            }
+
+            function truncateUtf8(value, maxBytes) {
+                const encoder = new TextEncoder();
+                let result = '';
+                for (const character of value) {
+                    if (encoder.encode(result + character).length > maxBytes) break;
+                    result += character;
+                }
+                return result;
             }
 
             auth.onAuthStateChanged(user => {
@@ -1148,6 +1179,7 @@
                 if (gameOver) return;
                 if (recordSkip) addAttemptHistory('skipped');
                 if (currentStep >= DURATIONS.length - 1) {
+                    stopPlayback();
                     showResult(false, MAX_ATTEMPTS, DURATIONS[currentStep], 0);
                     playBackgroundMusic();
                     return;
