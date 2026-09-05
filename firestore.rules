@@ -2,12 +2,14 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function validPack(data) {
-      return data.keys().hasOnly(['name', 'description', 'icon', 'color', 'tracks', 'creatorId', 'createdAt', 'plays'])
+      return data.keys().hasAll(['name', 'description', 'icon', 'color', 'tracks', 'creatorId', 'createdAt', 'plays'])
+        && data.keys().hasOnly(['name', 'description', 'icon', 'color', 'tracks', 'creatorId', 'createdAt', 'plays'])
         && data.name is string && data.name.size() <= 80
         && data.description is string && data.description.size() <= 480
         && data.icon is string && data.icon.size() <= 16
         && data.color is string && data.color.size() <= 16
         && data.tracks is list && data.tracks.size() > 0 && data.tracks.size() <= 20
+        && data.createdAt is timestamp
         && data.plays is number && data.plays >= 0;
     }
     match /users/{userId} {
@@ -41,8 +43,8 @@ service cloud.firestore {
 
     match /packScores/{scoreId} {
       allow read: if true;
-      allow create, update: if request.auth != null
-        && scoreId.matches('.*_' + request.auth.uid)
+      allow create: if request.auth != null
+        && scoreId == request.resource.data.packId + '_' + request.auth.uid
         && request.resource.data.keys().hasOnly(['packId', 'nickname', 'score'])
         && request.resource.data.packId is string
         && request.resource.data.packId.size() <= 128
@@ -52,7 +54,7 @@ service cloud.firestore {
         && request.resource.data.score >= 0
         && request.resource.data.score <= 100;
       allow update: if request.auth != null
-        && scoreId.matches('.*_' + request.auth.uid)
+        && scoreId == request.resource.data.packId + '_' + request.auth.uid
         && request.resource.data.keys().hasOnly(['packId', 'nickname', 'score'])
         && request.resource.data.packId == resource.data.packId
         && request.resource.data.nickname is string

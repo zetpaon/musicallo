@@ -602,7 +602,7 @@
                 <input type="text" class="guess-input" id="guessInput"
                 placeholder="Начните вводить название или исполнителя..."
                 autocomplete="off">
-                <button class="btn-submit skip-mode" id="btnSubmit">Скип</button>
+                <button class="btn-submit skip-mode" id="btnSubmit" aria-label="Пропустить текущую попытку">Скип</button>
             </div>
             <div class="datalist-suggestions" id="customDropdown"></div>
         </div>
@@ -1195,6 +1195,7 @@
             function updateSubmitButton() {
                 const hasGuess = Boolean(guessInput.value.trim());
                 btnSubmit.textContent = hasGuess ? 'Проверить' : 'Скип';
+                btnSubmit.setAttribute('aria-label', hasGuess ? 'Проверить ответ' : 'Пропустить текущую попытку');
                 btnSubmit.classList.toggle('skip-mode', !hasGuess);
             }
 
