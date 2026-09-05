@@ -12,7 +12,7 @@ window.musicalloLevels = (() => {
             { min: 1, max: 10, color: '#a0c4ff' }, { min: 11, max: 20, color: '#4a90e2' },
             { min: 21, max: 30, color: '#9b59b6' }, { min: 31, max: 40, color: '#e91e8c' },
             { min: 41, max: 50, color: '#e74c3c' }, { min: 51, max: 60, color: '#f1c40f' },
-            { min: 61, max: 70, color: '#2ecc71' }, { min: 71, max: 80, color: '#00e5ff' },
+            { min: 61, max: 70, color: '#2ecc71' }, { min: 71, max: 80, color: '#00e5ff', special: true },
             { min: 81, max: 150, color: '#ff6600' }
         ]
     };
@@ -49,7 +49,7 @@ window.musicalloLevels = (() => {
     }
 
     function isSpecialLevel(level) {
-        return level >= 71 && level <= 80;
+        return Boolean(thresholds.colors.find(range => level >= range.min && level <= range.max)?.special);
     }
 
     return { getLevelInfo, getColorForLevel, isSpecialLevel };

@@ -1,13 +1,22 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function validPack(data) {
+      return data.keys().hasOnly(['name', 'description', 'icon', 'color', 'tracks', 'creatorId', 'createdAt', 'plays'])
+        && data.name is string && data.name.size() <= 80
+        && data.description is string && data.description.size() <= 480
+        && data.icon is string && data.icon.size() <= 16
+        && data.color is string && data.color.size() <= 16
+        && data.tracks is list && data.tracks.size() > 0 && data.tracks.size() <= 20
+        && data.plays is number && data.plays >= 0;
+    }
     match /users/{userId} {
       allow create, read, update, delete: if request.auth != null && request.auth.uid == userId;
     }
 
     match /leaderboard/{userId} {
       allow read: if true;
-      allow create, update: if request.auth != null
+      allow create: if request.auth != null
         && request.auth.uid == userId
         && request.resource.data.keys().hasOnly(['nickname', 'avatarUrl', 'score'])
         && request.resource.data.nickname is string
@@ -22,20 +31,12 @@ service cloud.firestore {
       allow read: if true;
       allow create: if request.auth != null
         && request.resource.data.creatorId == request.auth.uid
-        && request.resource.data.keys().hasOnly(['name', 'description', 'icon', 'color', 'tracks', 'creatorId', 'createdAt', 'plays'])
-        && request.resource.data.name is string
-        && request.resource.data.name.size() <= 80
-        && request.resource.data.description is string
-        && request.resource.data.description.size() <= 480
-        && request.resource.data.icon is string
-        && request.resource.data.icon.size() <= 16
-        && request.resource.data.color is string
-        && request.resource.data.color.size() <= 16
-        && request.resource.data.tracks is list
-        && request.resource.data.tracks.size() > 0
-        && request.resource.data.tracks.size() <= 20
+        && validPack(request.resource.data)
         && request.resource.data.plays == 0;
-      allow update, delete: if request.auth != null && resource.data.creatorId == request.auth.uid;
+      allow update: if request.auth != null && resource.data.creatorId == request.auth.uid
+        && request.resource.data.creatorId == resource.data.creatorId
+        && validPack(request.resource.data);
+      allow delete: if request.auth != null && resource.data.creatorId == request.auth.uid;
     }
 
     match /packScores/{scoreId} {
@@ -48,7 +49,17 @@ service cloud.firestore {
         && request.resource.data.nickname is string
         && request.resource.data.nickname.size() <= 32
         && request.resource.data.score is number
-        && request.resource.data.score >= 0;
+        && request.resource.data.score >= 0
+        && request.resource.data.score <= 100;
+      allow update: if request.auth != null
+        && scoreId.matches('.*_' + request.auth.uid)
+        && request.resource.data.keys().hasOnly(['packId', 'nickname', 'score'])
+        && request.resource.data.packId == resource.data.packId
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() <= 32
+        && request.resource.data.score is number
+        && request.resource.data.score >= resource.data.score
+        && request.resource.data.score <= resource.data.score + 100;
     }
   }
 }
