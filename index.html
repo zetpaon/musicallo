@@ -764,9 +764,10 @@
                     if (currentAuthUser) {
                         const userAvatar = document.createElement('div');
                         userAvatar.className = 'user-avatar';
-                        if (userData?.avatarUrl) {
+                        const avatarUrl = safeAvatarUrl(userData?.avatarUrl);
+                        if (avatarUrl) {
                             const image = document.createElement('img');
-                            image.src = userData.avatarUrl;
+                            image.src = avatarUrl;
                             image.alt = 'avatar';
                             userAvatar.appendChild(image);
                         } else {
@@ -810,7 +811,7 @@
             }
 
             function updateAvatarPreview() {
-                const url = avatarUrlInput.value.trim();
+                const url = safeAvatarUrl(avatarUrlInput.value.trim());
                 avatarPreview.textContent = '';
                 if (url) {
                     const image = document.createElement('img');
@@ -889,7 +890,7 @@
                 const publicNickname = nickname && nickname !== currentAuthUser.email ? truncateUtf8(nickname, 32) : 'Игрок';
                 return db.collection('leaderboard').doc(currentAuthUser.uid).set({
                     nickname: publicNickname,
-                    avatarUrl: truncateUtf8(userData?.avatarUrl || '', 2048),
+                    avatarUrl: truncateUtf8(safeAvatarUrl(userData?.avatarUrl), 2048),
                     score: Number(totalScore) || 0
                 }).catch(error => {
                     console.error('Ошибка обновления лидерборда:', error);
@@ -899,11 +900,23 @@
             function truncateUtf8(value, maxBytes) {
                 const encoder = new TextEncoder();
                 let result = '';
+                let byteLength = 0;
                 for (const character of value) {
-                    if (encoder.encode(result + character).length > maxBytes) break;
+                    const characterLength = encoder.encode(character).length;
+                    if (byteLength + characterLength > maxBytes) break;
                     result += character;
+                    byteLength += characterLength;
                 }
                 return result;
+            }
+
+            function safeAvatarUrl(value) {
+                try {
+                    const url = new URL(value);
+                    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+                } catch {
+                    return '';
+                }
             }
 
             auth.onAuthStateChanged(user => {
