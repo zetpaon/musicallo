@@ -75,6 +75,20 @@
             font-size: 0.72rem;
             text-align: center;
         }
+        .pack-scoreboard {
+            position: fixed;
+            top: 120px;
+            right: max(20px, calc((100vw - 1400px) / 2));
+            width: 240px;
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            background: rgba(21,21,34,0.88);
+            box-shadow: var(--shadow);
+        }
+        .pack-scoreboard h2 { font-size: 1rem; margin-bottom: 10px; }
+        .pack-scoreboard-item { display: flex; justify-content: space-between; gap: 8px; padding: 7px 0; border-top: 1px solid rgba(255,255,255,0.06); color: var(--text-dim); font-size: 0.82rem; }
+        .pack-scoreboard-item strong { color: var(--warning); white-space: nowrap; }
 
         .game-container {
             position: relative;
@@ -471,6 +485,8 @@
             .mobile-menu-inner { display: grid; gap: 14px; padding: 14px; }
             .mobile-menu .profile-area { justify-content: center; }
             .mobile-menu .btn-leaderboard { text-align: center; }
+            .pack-scoreboard { display: none; }
+            .mobile-menu .pack-scoreboard { position: static; display: block; width: 100%; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
             .game-title { font-size: 1.5rem; }
             .audio-controls { gap: 8px; }
             .btn-play { width: 48px; height: 48px; font-size: 18px; }
@@ -520,6 +536,7 @@
                     </div>
                     <a class="btn-leaderboard" href="leaderboard.html">🏆 Лидерборд</a>
                     <a class="btn-leaderboard" href="packs.html">📦 Паки</a>
+                    <aside class="pack-scoreboard hidden" id="mobilePackScoreboard"><h2 id="mobilePackScoreTitle"></h2><div id="mobilePackScores"></div></aside>
                 </div>
             </div>
         </div>
@@ -592,6 +609,7 @@
 
         <button class="btn-give-up" id="btnGiveUp">🏳️ Сдаться</button>
         </div>
+        <aside class="pack-scoreboard hidden" id="packScoreboard"><h2 id="packScoreTitle"></h2><div id="packScores"></div></aside>
         <footer class="page-footer">zetpaon</footer>
     </div>
 
@@ -752,6 +770,12 @@
             const infoMessage = document.getElementById('infoMessage');
             const btnInfoRetry = document.getElementById('btnInfoRetry');
             const activePackLabel = document.getElementById('activePackLabel');
+            const packScoreboard = document.getElementById('packScoreboard');
+            const packScoreTitle = document.getElementById('packScoreTitle');
+            const packScores = document.getElementById('packScores');
+            const mobilePackScoreboard = document.getElementById('mobilePackScoreboard');
+            const mobilePackScoreTitle = document.getElementById('mobilePackScoreTitle');
+            const mobilePackScores = document.getElementById('mobilePackScores');
             const menuToggle = document.getElementById('menuToggle');
             const mobileMenu = document.getElementById('mobileMenu');
 
@@ -911,6 +935,43 @@
                 });
             }
 
+            async function loadPackScores() {
+                [packScoreboard, mobilePackScoreboard].forEach(element => element.classList.toggle('hidden', !activePack));
+                if (!activePack) return;
+                [packScoreTitle, mobilePackScoreTitle].forEach(element => element.textContent = `🏆 ${activePack.name}`);
+                [packScores, mobilePackScores].forEach(element => element.textContent = 'Загрузка...');
+                try {
+                    const snapshot = await db.collection('packScores').where('packId', '==', activePack.id).get();
+                    const scores = snapshot.docs.map(doc => doc.data()).sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 5);
+                    [packScores, mobilePackScores].forEach(element => {
+                        element.textContent = '';
+                        if (!scores.length) { element.textContent = 'Пока нет результатов'; return; }
+                        scores.forEach((score, index) => {
+                            const item = document.createElement('div');
+                            item.className = 'pack-scoreboard-item';
+                            const name = document.createElement('span');
+                            name.textContent = `${index + 1}. ${score.nickname || 'Игрок'}`;
+                            const points = document.createElement('strong');
+                            points.textContent = `${score.score || 0}`;
+                            item.append(name, points);
+                            element.appendChild(item);
+                        });
+                    });
+                } catch {
+                    [packScores, mobilePackScores].forEach(element => element.textContent = 'Рейтинг недоступен');
+                }
+            }
+
+            function savePackScore(points) {
+                if (!activePack || !currentAuthUser) return;
+                const nickname = truncateUtf8((userData?.nickname || 'Игрок').trim(), 32) || 'Игрок';
+                db.collection('packScores').doc(`${activePack.id}_${currentAuthUser.uid}`).set({
+                    packId: activePack.id,
+                    nickname,
+                    score: firebase.firestore.FieldValue.increment(points)
+                }, { merge: true }).then(loadPackScores).catch(error => console.error('Ошибка сохранения рейтинга пака:', error));
+            }
+
             function truncateUtf8(value, maxBytes) {
                 const encoder = new TextEncoder();
                 let result = '';
@@ -1006,6 +1067,7 @@
                     TRACKS = data.tracks;
                     activePackLabel.textContent = activePack ? `Сейчас играет пак: ${activePack.icon || '🎵'} ${activePack.name}` : '';
                     activePackLabel.classList.toggle('hidden', !activePack);
+                    loadPackScores();
                     if (Array.isArray(data.suggestions)) {
                         ALL_SUGGESTIONS = data.suggestions;
                     } else {
@@ -1269,6 +1331,7 @@
                     totalScore += pointsEarned;
                     if (currentAuthUser) {
                         saveScoreToFirestore();
+                        savePackScore(pointsEarned);
                     }
                     updateLevelDisplay();
                     showResult(true, currentStep, DURATIONS[currentStep], pointsEarned);

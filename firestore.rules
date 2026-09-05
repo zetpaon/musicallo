@@ -37,5 +37,18 @@ service cloud.firestore {
         && request.resource.data.plays == 0;
       allow update, delete: if request.auth != null && resource.data.creatorId == request.auth.uid;
     }
+
+    match /packScores/{scoreId} {
+      allow read: if true;
+      allow create, update: if request.auth != null
+        && scoreId.matches('.*_' + request.auth.uid)
+        && request.resource.data.keys().hasOnly(['packId', 'nickname', 'score'])
+        && request.resource.data.packId is string
+        && request.resource.data.packId.size() <= 128
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() <= 32
+        && request.resource.data.score is number
+        && request.resource.data.score >= 0;
+    }
   }
 }
