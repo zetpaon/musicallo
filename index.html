@@ -87,7 +87,7 @@
             box-shadow: var(--shadow), 0 0 120px rgba(108,92,231,0.08);
             padding: 36px 32px 32px;
             backdrop-filter: blur(20px);
-            transition: var(--transition);
+            transition: width var(--transition), max-width var(--transition), padding var(--transition), border-radius var(--transition), box-shadow var(--transition);
             animation: fadeInUp 0.6s ease-out;
         }
 
@@ -314,9 +314,13 @@
         .step-dot.completed { background: var(--success); box-shadow: 0 0 8px rgba(0,184,148,0.4); }
 
         .attempt-history { display: grid; gap: 8px; margin-bottom: 20px; }
-        .attempt-history-item { padding: 10px 14px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; color: var(--text-dim); background: rgba(0,0,0,0.2); font-size: 0.85rem; }
+        .attempt-history-item { padding: 10px 14px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; color: var(--text-dim); background: rgba(0,0,0,0.2); font-size: 0.85rem; animation: attemptHistoryIn 0.35s ease-out both; }
         .attempt-history-item.skipped { color: var(--accent-glow); }
         .attempt-history-item.guessed { color: var(--warning); }
+        @keyframes attemptHistoryIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         .attempt-counter { text-align: center; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 16px; letter-spacing: 0.3px; }
         .attempt-counter span { color: var(--accent-glow); font-weight: 700; font-size: 1.1rem; }
@@ -457,6 +461,10 @@
                 opacity: 0;
                 overflow: hidden;
                 transition: grid-template-rows var(--transition), opacity var(--transition), border-color var(--transition);
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .game-container, .attempt-history-item { animation: none; transition: none; }
             }
             .mobile-menu.open { grid-template-rows: 1fr; border-color: rgba(255,255,255,0.08); opacity: 1; }
             .mobile-menu-content { min-height: 0; overflow: hidden; }
@@ -1114,6 +1122,7 @@
             }
 
             function addAttemptHistory(type, guess = '') {
+                const previousHeight = gameContainer.getBoundingClientRect().height;
                 const item = document.createElement('div');
                 item.className = `attempt-history-item ${type}`;
                 const attempt = currentStep === BONUS_STEP ? 'Бонусный фрагмент' : `Попытка ${currentStep}`;
@@ -1121,6 +1130,13 @@
                     ? `${attempt}: пропущена`
                     : `${attempt}: ${guess}`;
                 attemptHistory.appendChild(item);
+                const newHeight = gameContainer.getBoundingClientRect().height;
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && newHeight !== previousHeight) {
+                    gameContainer.animate([
+                        { height: `${previousHeight}px` },
+                        { height: `${newHeight}px` }
+                    ], { duration: 350, easing: 'ease-out' });
+                }
             }
 
             function updateProgressDisplay() {
