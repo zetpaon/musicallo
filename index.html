@@ -744,7 +744,7 @@
 
             function updateLevelDisplay() {
                 const info = window.musicalloLevels.getLevelInfo(totalScore);
-                if (info.level >= 71 && info.level <= 80) {
+                if (window.musicalloLevels.isSpecialLevel(info.level)) {
                     levelBadge.textContent = `Уровень ${info.level} ✦`;
                 } else {
                     levelBadge.textContent = `Уровень ${info.level}`;
@@ -888,9 +888,10 @@
                 if (!currentAuthUser) return Promise.resolve();
                 const nickname = (userData?.nickname || '').trim();
                 const publicNickname = nickname && nickname !== currentAuthUser.email ? truncateUtf8(nickname, 32) : 'Игрок';
+                const avatarUrl = safeAvatarUrl(userData?.avatarUrl);
                 return db.collection('leaderboard').doc(currentAuthUser.uid).set({
                     nickname: publicNickname,
-                    avatarUrl: truncateUtf8(safeAvatarUrl(userData?.avatarUrl), 2048),
+                    avatarUrl: new TextEncoder().encode(avatarUrl).length <= 2048 ? avatarUrl : '',
                     score: Number(totalScore) || 0
                 }).catch(error => {
                     console.error('Ошибка обновления лидерборда:', error);
@@ -1399,7 +1400,7 @@
             resultOverlay.addEventListener('click', e => { if (e.target === resultOverlay) resetGame(); });
             menuToggle.addEventListener('click', () => {
                 const isOpen = mobileMenu.classList.toggle('open');
-                menuToggle.setAttribute('aria-expanded', isOpen);
+                menuToggle.setAttribute('aria-expanded', String(isOpen));
             });
 
             loadTracks();

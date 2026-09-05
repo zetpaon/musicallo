@@ -48,5 +48,9 @@ window.musicalloLevels = (() => {
         };
     }
 
-    return { getLevelInfo, getColorForLevel };
+    function isSpecialLevel(level) {
+        return level >= 71 && level <= 80;
+    }
+
+    return { getLevelInfo, getColorForLevel, isSpecialLevel };
 })();
