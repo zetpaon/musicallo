@@ -19,8 +19,9 @@
         .rank { color: var(--accent); font-weight: 700; text-align: center; }
         .avatar { width: 46px; height: 46px; display: grid; place-items: center; overflow: hidden; border-radius: 50%; background: #333; font-size: 22px; }
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .player-info { min-width: 0; display: flex; align-items: center; gap: 6px; }
         .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
-        .level { margin-top: 3px; color: var(--dim); font-size: .82rem; }
+        .level-badge { flex-shrink: 0; padding: 4px 12px; border-radius: 20px; color: #1a1a2e; font-size: 1rem; font-weight: 700; }
         .score { color: var(--warning); font-weight: 700; white-space: nowrap; }
         .status { padding: 24px; color: var(--dim); text-align: center; }
     </style>
@@ -35,6 +36,17 @@
         firebase.initializeApp(firebaseConfig);
         const list = document.getElementById('leaderboard');
         const thresholdForLevel = level => level <= 10 ? 150 : 150 + Math.min(70, Math.ceil((level - 10) / 10) * 5);
+        function getColorForLevel(level) {
+            if (level <= 10) return '#a0c4ff';
+            if (level <= 20) return '#4a90e2';
+            if (level <= 30) return '#9b59b6';
+            if (level <= 40) return '#e91e8c';
+            if (level <= 50) return '#e74c3c';
+            if (level <= 60) return '#f1c40f';
+            if (level <= 70) return '#2ecc71';
+            if (level <= 80) return '#00e5ff';
+            return '#ff6600';
+        }
         function getLevel(score) {
             let level = 1, required = 150;
             while (score >= required && level < 150) { level++; required += thresholdForLevel(level); }
@@ -53,9 +65,10 @@
                 const avatar = document.createElement('span'); avatar.className = 'avatar';
                 const url = safeAvatarUrl(user.avatarUrl);
                 if (url) { const image = document.createElement('img'); image.src = url; image.alt = ''; image.referrerPolicy = 'no-referrer'; avatar.appendChild(image); } else avatar.textContent = '👤';
-                const details = document.createElement('div');
+                const details = document.createElement('div'); details.className = 'player-info';
                 const name = document.createElement('div'); name.className = 'name'; name.textContent = user.nickname || 'Игрок';
-                const level = document.createElement('div'); level.className = 'level'; level.textContent = `Уровень ${getLevel(score)}`;
+                const playerLevel = getLevel(score);
+                const level = document.createElement('span'); level.className = 'level-badge'; level.textContent = `Уровень ${playerLevel}`; level.style.backgroundColor = getColorForLevel(playerLevel);
                 details.append(name, level);
                 const scoreElement = document.createElement('span'); scoreElement.className = 'score'; scoreElement.textContent = `${score} очк.`;
                 item.append(rank, avatar, details, scoreElement); list.appendChild(item);
