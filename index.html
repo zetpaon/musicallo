@@ -312,14 +312,10 @@
         .step-dot.active { background: var(--accent-glow); box-shadow: 0 0 12px rgba(162,155,254,0.6); transform: scale(1.3); }
         .step-dot.completed { background: var(--success); box-shadow: 0 0 8px rgba(0,184,148,0.4); }
 
-        .skip-section { margin-bottom: 20px; }
-        .btn-skip { width: 100%; padding: 14px 20px; border-radius: 14px; border: 2px solid rgba(108,92,231,0.4); background: rgba(108,92,231,0.12); color: var(--accent-glow); font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition); letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center; gap: 10px; position: relative; overflow: hidden; }
-        .btn-skip::before { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%; background: rgba(108,92,231,0.25); transition: all 0.5s ease; transform: translate(-50%,-50%); }
-        .btn-skip:hover::before { width: 300px; height: 300px; }
-        .btn-skip:hover { border-color: var(--accent); background: rgba(108,92,231,0.2); box-shadow: 0 8px 30px rgba(108,92,231,0.3); transform: translateY(-2px); }
-        .btn-skip:active { transform: translateY(0); box-shadow: 0 4px 15px rgba(108,92,231,0.2); }
-        .btn-skip:disabled { opacity: 0.4; cursor: not-allowed; border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: var(--text-dim); transform: none; box-shadow: none; }
-        .skip-icon { font-size: 1.2rem; }
+        .attempt-history { display: grid; gap: 8px; margin-bottom: 20px; }
+        .attempt-history-item { padding: 10px 14px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; color: var(--text-dim); background: rgba(0,0,0,0.2); font-size: 0.85rem; }
+        .attempt-history-item.skipped { color: var(--accent-glow); }
+        .attempt-history-item.guessed { color: var(--warning); }
 
         .attempt-counter { text-align: center; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 16px; letter-spacing: 0.3px; }
         .attempt-counter span { color: var(--accent-glow); font-weight: 700; font-size: 1.1rem; }
@@ -336,6 +332,8 @@
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(108,92,231,0.5); }
         .btn-submit:active { transform: translateY(0); box-shadow: 0 4px 15px rgba(108,92,231,0.3); }
         .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-submit.skip-mode { border: 1px solid rgba(108,92,231,0.45); background: transparent; color: var(--accent-glow); box-shadow: none; }
+        .btn-submit.skip-mode:hover { background: rgba(108,92,231,0.12); box-shadow: 0 8px 30px rgba(108,92,231,0.2); }
 
         .btn-give-up { display: none; width: 100%; padding: 14px 20px; border-radius: 14px; border: 2px solid var(--error); background: rgba(255,107,107,0.1); color: var(--error); font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition); letter-spacing: 0.3px; margin-top: 10px; }
         .btn-give-up.show { display: block; }
@@ -563,12 +561,7 @@
             </div>
         </div>
 
-        <div class="skip-section">
-            <button class="btn-skip" id="btnSkip">
-                <span class="skip-icon">⏭</span>
-                <span id="skipText">Скип — слушать 0.5 сек</span>
-            </button>
-        </div>
+        <div class="attempt-history" id="attemptHistory" aria-live="polite"></div>
 
         <div class="attempt-counter" id="attemptCounter">
             Бонусный фрагмент (0.1 сек)
@@ -580,7 +573,7 @@
                 <input type="text" class="guess-input" id="guessInput"
                 placeholder="Начните вводить название или исполнителя..."
                 autocomplete="off">
-                <button class="btn-submit" id="btnSubmit">Проверить</button>
+                <button class="btn-submit skip-mode" id="btnSubmit">Скип</button>
             </div>
             <div class="datalist-suggestions" id="customDropdown"></div>
         </div>
@@ -623,7 +616,7 @@
                 <span class="placeholder">👤</span>
             </div>
             <input type="text" id="avatarUrlInput" class="modal-input" placeholder="URL аватарки">
-            <input type="text" id="nicknameInput" class="modal-input" placeholder="Никнейм">
+            <input type="text" id="nicknameInput" class="modal-input" placeholder="Никнейм" maxlength="16">
             <div class="modal-buttons">
                 <button class="modal-btn primary" id="btnSaveProfile">Сохранить</button>
                 <button class="modal-btn secondary" id="btnCancelEdit">Отмена</button>
@@ -694,7 +687,6 @@
 
             const audioPlayer = document.getElementById('audioPlayer');
             const btnPlay = document.getElementById('btnPlay');
-            const btnSkip = document.getElementById('btnSkip');
             const btnSubmit = document.getElementById('btnSubmit');
             const btnRestart = document.getElementById('btnRestart');
             const btnGiveUp = document.getElementById('btnGiveUp');
@@ -702,7 +694,7 @@
             const durationBadge = document.getElementById('durationBadge');
             const guessInput = document.getElementById('guessInput');
             const attemptCounter = document.getElementById('attemptCounter');
-            const skipText = document.getElementById('skipText');
+            const attemptHistory = document.getElementById('attemptHistory');
             const progressRing = document.getElementById('progressRing');
             const customDropdown = document.getElementById('customDropdown');
             const resultOverlay = document.getElementById('resultOverlay');
@@ -930,7 +922,7 @@
             function syncLeaderboard() {
                 if (!currentAuthUser) return Promise.resolve();
                 const nickname = (userData?.nickname || '').trim();
-                const publicNickname = nickname && nickname !== currentAuthUser.email ? nickname.slice(0, 30) : 'Игрок';
+                const publicNickname = nickname && nickname !== currentAuthUser.email ? nickname.slice(0, 16) : 'Игрок';
                 return db.collection('leaderboard').doc(currentAuthUser.uid).set({
                     nickname: publicNickname,
                     avatarUrl: (userData?.avatarUrl || '').slice(0, 2048),
@@ -1024,7 +1016,6 @@
 
             function setControlsEnabled(enabled) {
                 btnPlay.disabled = !enabled;
-                btnSkip.disabled = !enabled;
                 btnSubmit.disabled = !enabled;
                 btnGiveUp.classList.remove('show');
                 if (enabled) {
@@ -1078,6 +1069,7 @@
                 audioPlayer.src = currentTrack.audioSrc;
                 audioPlayer.load();
                 currentStep = BONUS_STEP;
+                attemptHistory.textContent = '';
                 maxEnd = AUDIO_START_OFFSET + DURATIONS[BONUS_STEP];
                 boundaries = [];
                 currentPlayStart = AUDIO_START_OFFSET;
@@ -1103,15 +1095,6 @@
                 if (!currentTrack) return;
                 const duration = DURATIONS[currentStep];
                 durationBadge.textContent = duration + ' сек';
-                if (currentStep < DURATIONS.length - 1) {
-                    const nextDuration = DURATIONS[currentStep + 1];
-                    if (currentStep === BONUS_STEP) skipText.textContent = 'Скип — начать попытку 1 (' + nextDuration + ' сек)';
-                    else skipText.textContent = 'Скип — попытка ' + (currentStep + 1) + ' (' + nextDuration + ' сек)';
-                    btnSkip.disabled = false;
-                } else {
-                    skipText.textContent = 'Максимальный фрагмент';
-                    btnSkip.disabled = true;
-                }
                 if (currentStep === BONUS_STEP) {
                     attemptCounter.innerHTML = 'Бонусный фрагмент (0.1 сек) — попытка не расходуется';
                 } else {
@@ -1133,6 +1116,23 @@
                     btnGiveUp.classList.remove('show');
                     canGiveUp = false;
                 }
+                updateSubmitButton();
+            }
+
+            function updateSubmitButton() {
+                const hasGuess = Boolean(guessInput.value.trim());
+                btnSubmit.textContent = hasGuess ? 'Проверить' : 'Скип';
+                btnSubmit.classList.toggle('skip-mode', !hasGuess);
+            }
+
+            function addAttemptHistory(type, guess = '') {
+                const item = document.createElement('div');
+                item.className = `attempt-history-item ${type}`;
+                const attempt = currentStep === BONUS_STEP ? 'Бонусный фрагмент' : `Попытка ${currentStep}`;
+                item.textContent = type === 'skipped'
+                    ? `${attempt}: пропущена`
+                    : `${attempt}: ${guess}`;
+                attemptHistory.appendChild(item);
             }
 
             function updateProgressDisplay() {
@@ -1201,8 +1201,14 @@
                 startPlayback(AUDIO_START_OFFSET, maxEnd);
             }
 
-            function skipToNext() {
-                if (gameOver || currentStep >= DURATIONS.length - 1) return;
+            function skipToNext(recordSkip = true) {
+                if (gameOver) return;
+                if (recordSkip) addAttemptHistory('skipped');
+                if (currentStep >= DURATIONS.length - 1) {
+                    showResult(false, MAX_ATTEMPTS, DURATIONS[currentStep], 0);
+                    playBackgroundMusic();
+                    return;
+                }
                 stopPlayback();
                 const newStart = maxEnd;
                 currentStep++;
@@ -1217,6 +1223,7 @@
                 stopPlayback();
                 gameOver = false;
                 guessInput.value = '';
+                updateSubmitButton();
                 resultOverlay.classList.add('hidden');
                 btnGiveUp.classList.remove('show');
                 canGiveUp = false;
@@ -1228,7 +1235,10 @@
                 if (gameOver) return;
                 if (!currentTrack) return;
                 const answer = guessInput.value.trim();
-                if (!answer) return;
+                if (!answer) {
+                    skipToNext(false);
+                    return;
+                }
                 const isCorrect = currentTrack.correctAnswers.some(a => 
                     answer.toLowerCase().includes(a.toLowerCase()) || a.toLowerCase().includes(answer.toLowerCase())
                 );
@@ -1244,6 +1254,7 @@
                     showResult(true, currentStep, DURATIONS[currentStep], pointsEarned);
                     playBackgroundMusic();
                 } else {
+                    addAttemptHistory('guessed', answer);
                     gameContainer.classList.add('shake');
                     setTimeout(() => gameContainer.classList.remove('shake'), 500);
                     guessInput.value = '';
@@ -1252,7 +1263,6 @@
                         stopPlayback();
                         btnSubmit.disabled = true;
                         guessInput.disabled = true;
-                        btnSkip.disabled = true;
                         btnGiveUp.classList.add('show');
                         canGiveUp = true;
                     } else {
@@ -1291,7 +1301,6 @@
                 }
                 btnSubmit.disabled = false;
                 guessInput.disabled = false;
-                btnSkip.disabled = false;
             }
 
             function playBackgroundMusic() {
@@ -1383,7 +1392,6 @@
                 if (isPlaying) stopPlayback();
                 else playCurrentFragment();
             });
-            btnSkip.addEventListener('click', skipToNext);
             btnSubmit.addEventListener('click', handleSubmit);
             btnGiveUp.addEventListener('click', () => {
                 if (canGiveUp) {
@@ -1392,7 +1400,10 @@
                 }
             });
             guessInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleSubmit(); });
-            guessInput.addEventListener('input', () => showCustomSuggestions(guessInput.value));
+            guessInput.addEventListener('input', () => {
+                showCustomSuggestions(guessInput.value);
+                updateSubmitButton();
+            });
             guessInput.addEventListener('focus', () => { if (guessInput.value.trim()) showCustomSuggestions(guessInput.value); });
             guessInput.addEventListener('blur', () => setTimeout(() => customDropdown.classList.remove('show'), 200));
             volumeSlider.addEventListener('input', () => { currentVolume = volumeSlider.value; audioPlayer.volume = currentVolume; });
