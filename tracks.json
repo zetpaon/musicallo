@@ -1,0 +1,314 @@
+{
+    "suggestions": [
+        "YOASOBI - IDOL",
+        "YOASOBI - 夜に駆ける (Yoru ni Kakeru)",
+        "YOASOBI - 怪物 (Kaibutsu)",
+        "YOASOBI - 群青 (Gunjou)",
+        "YOASOBI - ハルカ (Haruka)",
+        "YOASOBI - あの夢をなぞって (Ano Yume wo Nazotte)",
+        "YOASOBI - たぶん (Tabun)",
+        "YOASOBI - 三原色 (Sangenshoku)",
+        "YOASOBI - 祝福 (Shukufuku)",
+        "YOASOBI - ラブレター (Love Letter)",
+        "YOASOBI - セブンティーン (Seventeen)",
+        "YOASOBI - 大正浪漫 (Taishou Roman)",
+        "Ado - Usseewa",
+        "Ado - うっせぇわ (Usseewa)",
+        "Ado - 踊 (Odo)",
+        "Ado - ギラギラ (Giragira)",
+        "Ado - レディメイド (Ready-made)",
+        "Ado - 会いたくて (Aitakute)",
+        "E-Type - Angels Crying",
+        "E-Type - Life",
+        "E-Type - Set the World on Fire",
+        "E-Type - This Is the Way",
+        "E-Type - Russian Lullaby",
+        "TK from Ling tosite sigure - Unravel",
+        "TK from Ling tosite sigure - Signal",
+        "Ling tosite sigure - abnormalize",
+        "TK from Ling tosite sigure - Fantastic Magic",
+        "MORGENSHTERN – ICE",
+        "MORGENSHTERN – El Problema",
+        "MORGENSHTERN – Чёрный Русский",
+        "MORGENSHTERN – Кадиллак",
+        "MORGENSHTERN – Домофон",
+        "MORGENSHTERN – Новый Мерин",
+        "Nightcore - Rockefeller Street",
+        "Nightcore - This Little Girl",
+        "Nightcore - Angel of Darkness",
+        "Nightcore - Dam Dadi Doo",
+        "YENA - Catch Catch",
+        "YENA - Smiley",
+        "YENA - Pretty Boys",
+        "YENA - Before Anyone Else",
+        "Dead Butterflies - embers",
+        "Dead Butterflies - Bloom",
+        "Alan Walker - Alone",
+        "Alan Walker - Faded",
+        "Alan Walker - Darkside",
+        "Alan Walker - On My Way",
+        "Vandalism – Bleach",
+        "Vandalism – Getaway",
+        "Vandalism – Lights",
+        "Frums - HALL",
+        "Frums - VANISH",
+        "PIXY – LEGACY",
+        "PIXY – Wings",
+        "PIXY – Let Me Know",
+        "Little Big – Hypnodancer",
+        "Little Big – Skibidi",
+        "Little Big – Faradenza",
+        "Little Big – I'm OK",
+        "dArtagnan – Was wollen wir trinken",
+        "dArtagnan – In jener Nacht",
+        "dArtagnan – Griechischer Wein",
+        "dArtagnan – C'est la vie",
+        "Eve - 廻廻奇譚 (Kaikai Kitan)",
+        "Eve - ドラマツルギー (Dramaturgy)",
+        "Eve - 蒼のワルツ (Ao no Waltz)",
+        "Official髭男dism - Pretender",
+        "King Gnu - 白日 (Hakujitsu)",
+        "LiSA - 紅蓮華 (Gurenge)",
+        "Aimer - 残響散歌 (Zankyou Sanka)",
+        "Kenshi Yonezu - Lemon",
+        "米津玄師 - Lemon",
+        "Vaundy - 怪獣の花唄 (Kaijuu no Hanauta)",
+        "Fujii Kaze - 死ぬのがいいわ (Shinunoga E-wa)",
+        "RADWIMPS - 前前前世 (Zenzenzense)",
+        "ONE OK ROCK - Wherever you are",
+        "Aimer - カタオモイ (Kataomoi)",
+        "WANIMA - ともに (Tomoni)",
+        "Mrs. GREEN APPLE - 青と夏 (Ao to Natsu)",
+        "back number - 高嶺の花子さん",
+        "Official髭男dism - 115万キロのフィルム",
+        "ヨルシカ - だから僕は音楽を辞めた",
+        "ヨルシカ - ただ君に晴れ",
+        "あいみょん - マリーゴールド (Marigold)",
+        "米津玄師 - アイネクライネ (Eine Kleine)",
+        "米津玄師 - LOSER"
+    ],
+    "tracks": [
+        {
+            "id": "yoasobi-idol",
+            "fullName": "YOASOBI - IDOL",
+            "artist": "YOASOBI",
+            "title": "IDOL",
+            "audioSrc": "https://strm-m9-157.strm.yandex.net/music-v2/raw/ysign1=f4f70f4608461f2cb01515510841bcfb6b1aa664fd9a0905c6663f882afa91b0,lid=266,pfx,secret_version=ver-1,sfx,source=mds,ts=6aa93413/0/10240919/b50ac2fe.207742502.11.142548197/preview.mp3",
+            "correctAnswers": [
+                "yoasobi - idol",
+                "yoasobi idol",
+                "idol",
+                "yoasobi - アイドル",
+                "アイドル",
+                "yoasobi - アイドル (idol)"
+            ]
+        },
+        {
+            "id": "ado-usseewa",
+            "fullName": "Ado - Usseewa",
+            "artist": "Ado",
+            "title": "Usseewa",
+            "audioSrc": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/0c/8d/33/0c8d339b-db50-ce5a-8f20-bdbec6df3f6c/mzaf_12810502505979593882.plus.aac.ep.m4a",
+            "correctAnswers": [
+                "ado - usseewa",
+                "ado usseewa",
+                "usseewa",
+                "ado - うっせぇわ",
+                "うっせぇわ",
+                "ado - うっせぇわ (usseewa)"
+            ]
+        },
+        {
+            "id": "etype-angels-crying",
+            "fullName": "E-Type - Angels Crying",
+            "artist": "E-Type",
+            "title": "Angels Crying",
+            "audioSrc": "https://strm-m9-169.strm.yandex.net/music-v2/raw/ysign1=856efbb201daca7be42f73bb0b702a517071afa48d9dc52c0a4256189a2b3792,lid=101,pfx,secret_version=ver-1,sfx,source=mds,ts=6aa96000/5335/1773049/6ad11c74.13012464.5.515926/preview.mp3",
+            "correctAnswers": [
+                "e-type - angels crying",
+                "etype angels crying",
+                "angels crying",
+                "e type - angels crying"
+            ]
+        },
+        {
+            "id": "tk-unravel",
+            "fullName": "TK from Ling tosite sigure - Unravel",
+            "artist": "TK from Ling tosite sigure",
+            "title": "Unravel",
+            "audioSrc": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/47/d8/df/47d8df4c-f4ea-aa54-ca53-a7028c14e009/mzaf_1102037585999955661.plus.aac.ep.m4a",
+            "correctAnswers": [
+                "tk from ling tosite sigure - unravel",
+                "tk unravel",
+                "unravel",
+                "ling tosite sigure - unravel"
+            ]
+        },
+        {
+            "id": "morgenstern-ice",
+            "fullName": "MORGENSHTERN – ICE",
+            "artist": "MORGENSHTERN",
+            "title": "ICE",
+            "audioSrc": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a9/f6/2e/a9f62ec6-8811-5a3e-727c-d10715f19ac6/mzaf_14027952331922151722.plus.aac.p.m4a",
+            "correctAnswers": [
+                "morgenstern - ice",
+                "morgenstern ice",
+                "ice",
+                "моргенштерн - ice",
+                "моргенштерн ice",
+                "моргенштерн – ice"
+            ]
+        },
+        {
+            "id": "nightcore-rockefeller-street",
+            "fullName": "Nightcore - Rockefeller Street",
+            "artist": "Nightcore",
+            "title": "Rockefeller Street",
+            "audioSrc": "https://strm-m9-54.strm.yandex.net/music-v2/raw/ysign1=36a440e3c484e12d86d62278700eaa1a19fcd9503db7810ec0421df7e3192ada,lid=88,pfx,secret_version=ver-1,sfx,source=mds,ts=6aa99153/0/1662508/44476d0b.78631289.9.53012457/preview.mp3",
+            "correctAnswers": [
+                "nightcore - rockefeller street",
+                "nightcore rockefeller street",
+                "rockefeller street"
+            ]
+        },
+        {
+            "id": "morgenstern-el-problema",
+            "fullName": "MORGENSHTERN – El Problema",
+            "artist": "MORGENSHTERN",
+            "title": "El Problema",
+            "audioSrc": "https://strm-m9-110.strm.yandex.net/music-v2/raw/ysign1=602023b314ccba6dac87b1294c727e9182eda7783bc87a00636873df78e69ca1,lid=266,pfx,secret_version=ver-1,sfx,source=mds,ts=6aa9df7f/0/133034/2d5b888c.166879977.11.71335767/preview.mp3",
+            "correctAnswers": [
+                "morgenstern - el problema",
+                "morgenstern el problema",
+                "el problema",
+                "моргенштерн - el problema",
+                "моргенштерн el problema",
+                "моргенштерн – el problema"
+            ]
+        },
+        {
+            "id": "nightcore-this-little-girl",
+            "fullName": "Nightcore - This Little Girl",
+            "artist": "Nightcore",
+            "title": "This Little Girl",
+            "audioSrc": "https://strm-mar-203.strm.yandex.net/music-v2/raw/ysign1=2a93b44c5757ae81a8467867f8bea98770e941795ca31f818121bf6325c52ea9,lid=100,pfx,secret_version=ver-1,sfx,source=mds,ts=6aa9858e/0/219376/90a1aace.61082108.9.40379246/preview.mp3",
+            "correctAnswers": [
+                "nightcore - this little girl",
+                "nightcore this little girl",
+                "this little girl"
+            ]
+        },
+        {
+            "id": "yena-catch-catch",
+            "fullName": "YENA - Catch Catch",
+            "artist": "YENA",
+            "title": "Catch Catch",
+            "audioSrc": "https://strm-mar-139.strm.yandex.net/music-v2/raw/ysign1=dd6665083fa6f77d11b3a97d5f0bcbfddf08b4ff189999117597f0afa7650a42,lid=265,pfx,secret_version=ver-1,sfx,source=mds,ts=6aa9ac5d/0/134497/4e832ebc.220385367.11.151373036/preview.mp3",
+            "correctAnswers": [
+                "yena - catch catch",
+                "yena catch catch",
+                "catch catch"
+            ]
+        },
+        {
+            "id": "dead-butterflies-embers",
+            "fullName": "Dead Butterflies - embers",
+            "artist": "Dead Butterflies",
+            "title": "embers",
+            "audioSrc": "https://strm-m9-130.strm.yandex.net/music-v2/raw/ysign1=4c0354ca4e0cb4c2b3035c69bd5bb7c988e0d5611f46cf922f653b79358f1b2c,lid=101,pfx,secret_version=ver-1,sfx,source=mds,ts=6aa9ce6c/0/10818/d0351cab.222640699.11.152926145/preview.mp3",
+            "correctAnswers": [
+                "dead butterflies - embers",
+                "dead butterflies embers",
+                "embers"
+            ]
+        },
+        {
+            "id": "alan-walker-alone",
+            "fullName": "Alan Walker - Alone",
+            "artist": "Alan Walker",
+            "title": "Alone",
+            "audioSrc": "https://strm-m9-131.strm.yandex.net/music-v2/raw/ysign1=db5f2fcafd40aa653a01117f52a92c6c239ee705cbd9d81a72e13577ede1f700,lid=101,pfx,secret_version=ver-1,sfx,source=mds,ts=6aa8c050/0/4312117/30646394.217610116.10.149419719/preview.mp3",
+            "correctAnswers": [
+                "alan walker - alone",
+                "alan walker alone",
+                "alone"
+            ]
+        },
+        {
+            "id": "vandalism-bleach",
+            "fullName": "Vandalism – Bleach",
+            "artist": "Vandalism",
+            "title": "Bleach",
+            "audioSrc": "https://strm-m9-131.strm.yandex.net/music-v2/raw/ysign1=efba34bd8dff0916448023ddefccc7b7483a0059368b373db492fb14db1ff56b,lid=101,pfx,secret_version=ver-1,sfx,source=mds,ts=6aa9d9ac/5355/12761620/060feb81.180939890.6.123965954/preview.mp3",
+            "correctAnswers": [
+                "vandalism - bleach",
+                "vandalism bleach",
+                "bleach"
+            ]
+        },
+        {
+            "id": "frums-hall",
+            "fullName": "Frums - HALL",
+            "artist": "Frums",
+            "title": "HALL",
+            "audioSrc": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/eb/14/94/eb1494af-4b74-ef8a-0989-23c47d038ce0/mzaf_14040390088632035672.plus.aac.ep.m4a",
+            "correctAnswers": [
+                "frums - hall",
+                "frums hall",
+                "hall"
+            ]
+        },
+        {
+            "id": "pixy-legacy",
+            "fullName": "PIXY – LEGACY",
+            "artist": "PIXY",
+            "title": "LEGACY",
+            "audioSrc": "https://strm-m9-19.strm.yandex.net/music-v2/raw/ysign1=4e1201f1fae0a7f861923aa631fb32fa22090e7ce299b7bd9fca86bb8e090bed,lid=88,pfx,secret_version=ver-1,sfx,source=mds,ts=6aa8d144/0/5284665/3c9ace60.218282154.11.149884032/preview.mp3",
+            "correctAnswers": [
+                "pixy - legacy",
+                "pixy legacy",
+                "legacy"
+            ]
+        },
+        {
+            "id": "little-big-hypnodancer",
+            "fullName": "Little Big – Hypnodancer",
+            "artist": "Little Big",
+            "title": "Hypnodancer",
+            "audioSrc": "https://strm-mar-162.strm.yandex.net/music-v2/raw/ysign1=eb87419f83ec0debfc6c98c3ac9a9b066008f0fda0fefac34ca09d1e2cf9c43f,lid=100,pfx,secret_version=ver-1,sfx,source=mds,ts=6aa97069/0/1748928/f739bf78.196193594.7.65713819/preview.mp3",
+            "correctAnswers": [
+                "little big - hypnodancer",
+                "little big hypnodancer",
+                "hypnodancer"
+            ]
+        },
+        {
+            "id": "dartagnan-was-wollen-wir-trinken",
+            "fullName": "dArtagnan – Was wollen wir trinken",
+            "artist": "dArtagnan",
+            "title": "Was wollen wir trinken",
+            "audioSrc": "https://strm-mar-233.strm.yandex.net/music-v2/raw/ysign1=139c63455e0e872900d7d6e12d055435bf259b281840f1972e144e24dda350f0,lid=100,pfx,secret_version=ver-1,sfx,source=mds,ts=6aa9e386/5335/1651284/88814c86.64347738.12.42943890/preview.mp3",
+            "correctAnswers": [
+                "dartagnan - was wollen wir trinken",
+                "dartagnan was wollen wir trinken",
+                "was wollen wir trinken"
+            ]
+        },
+        {
+            "id": "morgenstern-chyornyy-russkiy",
+            "fullName": "MORGENSHTERN – Чёрный Русский",
+            "artist": "MORGENSHTERN",
+            "title": "Чёрный Русский",
+            "audioSrc": "https://strm-mar-133.strm.yandex.net/music-v2/raw/ysign1=ef6de41d115214f5ebb7541d6ee4ec5a1eaa0de4385ade9087013117ca380ad2,lid=100,pfx,secret_version=ver-1,sfx,source=mds,ts=6aa9b664/0/1602599/5978da0e.216114323.11.117095821/preview.mp3",
+            "correctAnswers": [
+                "morgenstern - чёрный русский",
+                "morgenstern чёрный русский",
+                "чёрный русский",
+                "черный русский",
+                "моргенштерн - чёрный русский",
+                "моргенштерн чёрный русский",
+                "моргенштерн – чёрный русский"
+            ]
+        }
+    ]
+}
