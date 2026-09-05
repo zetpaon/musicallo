@@ -528,6 +528,7 @@
             <div class="game-header">
             <h1 class="game-title">🎵 Угадай трек</h1>
             <p class="game-subtitle">Слушай фрагмент и попробуй угадать название</p>
+            <p class="game-subtitle hidden" id="activePackLabel"></p>
 
             <!-- Информационное сообщение (по умолчанию скрыто) -->
             <div class="info-message hidden" id="infoMessage">
@@ -750,6 +751,7 @@
             const btnLogout = document.getElementById('btnLogout');
             const infoMessage = document.getElementById('infoMessage');
             const btnInfoRetry = document.getElementById('btnInfoRetry');
+            const activePackLabel = document.getElementById('activePackLabel');
             const menuToggle = document.getElementById('menuToggle');
             const mobileMenu = document.getElementById('mobileMenu');
 
@@ -1002,10 +1004,12 @@
                         throw new Error('Неверный формат данных: отсутствует массив tracks');
                     }
                     TRACKS = data.tracks;
+                    activePackLabel.textContent = activePack ? `Сейчас играет пак: ${activePack.icon || '🎵'} ${activePack.name}` : '';
+                    activePackLabel.classList.toggle('hidden', !activePack);
                     if (Array.isArray(data.suggestions)) {
                         ALL_SUGGESTIONS = data.suggestions;
                     } else {
-                        console.warn('Поле suggestions отсутствует, подсказки будут пустыми');
+                        ALL_SUGGESTIONS = TRACKS.map(track => track.fullName).filter(Boolean);
                     }
                     document.getElementById('errorOverlay').classList.add('hidden');
                     tracksLoaded = true;
