@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow create, read, update, delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /leaderboard/{userId} {
+      allow read: if true;
+      allow create, update: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly(['nickname', 'avatarUrl', 'score'])
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() <= 30
+        && request.resource.data.avatarUrl is string
+        && request.resource.data.avatarUrl.size() <= 2048
+        && request.resource.data.score is number
+        && request.resource.data.score >= 0;
+    }
+  }
+}

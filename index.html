@@ -205,27 +205,19 @@
         .level-progress-bar { width: 100px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
         .level-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-glow)); transition: width 0.5s ease; }
 
-        .leaderboard {
-            margin: 20px 0;
-            padding: 16px;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px;
-            background: rgba(0,0,0,0.22);
-        }
-        .leaderboard-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; text-align: left; }
-        .leaderboard-list { list-style: none; display: grid; gap: 8px; }
-        .leaderboard-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 9px 10px;
+        .btn-leaderboard {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 9px 16px;
+            border: 1px solid rgba(108,92,231,0.4);
             border-radius: 10px;
-            background: rgba(255,255,255,0.04);
+            color: var(--accent-glow);
+            background: rgba(108,92,231,0.12);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
         }
-        .leaderboard-rank { width: 24px; color: var(--accent-glow); font-weight: 700; text-align: center; }
-        .leaderboard-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .leaderboard-score { color: var(--warning); font-weight: 700; white-space: nowrap; }
-        .leaderboard-status { color: var(--text-dim); font-size: 0.85rem; text-align: center; }
+        .btn-leaderboard:hover { background: rgba(108,92,231,0.25); transform: translateY(-2px); }
 
         .audio-card { background: rgba(0,0,0,0.35); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; }
         .track-info { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
@@ -426,13 +418,8 @@
                     </div>
                 </div>
 
-                <section class="leaderboard" aria-labelledby="leaderboardTitle">
-                    <h2 class="leaderboard-title" id="leaderboardTitle">🏆 Лидерборд</h2>
-                    <ol class="leaderboard-list" id="leaderboardList" aria-live="polite">
-                        <li class="leaderboard-status">Загрузка рейтинга...</li>
-                    </ol>
-                </section>
             </div>
+            <a class="btn-leaderboard" href="leaderboard.html">🏆 Лидерборд</a>
         </div>
 
         <div class="audio-card">
@@ -647,7 +634,6 @@
             const btnLogout = document.getElementById('btnLogout');
             const infoMessage = document.getElementById('infoMessage');
             const btnInfoRetry = document.getElementById('btnInfoRetry');
-            const leaderboardList = document.getElementById('leaderboardList');
 
             const levelThresholds = {
                 base: 150,
@@ -776,6 +762,7 @@
                         nickname: newNickname
                     }, { merge: true });
                     userData = { ...userData, avatarUrl: newAvatarUrl, nickname: newNickname };
+                    await syncLeaderboard();
                     updateUserInterface();
                     editModal.classList.add('hidden');
                 } catch (error) {
@@ -798,6 +785,7 @@
                         totalScore = 0;
                         db.collection('users').doc(uid).set(userData);
                     }
+                    syncLeaderboard();
                     updateLevelDisplay();
                     updateUserInterface();
                     userDataLoaded = true;
@@ -814,56 +802,22 @@
                 if (currentAuthUser) {
                     db.collection('users').doc(currentAuthUser.uid).set({
                         score: totalScore
-                    }, { merge: true }).then(loadLeaderboard).catch(error => {
+                    }, { merge: true }).then(syncLeaderboard).catch(error => {
                         console.error('Ошибка сохранения рейтинга:', error);
                     });
                 }
             }
 
-            function loadLeaderboard() {
-                leaderboardList.textContent = '';
-                const loadingItem = document.createElement('li');
-                loadingItem.className = 'leaderboard-status';
-                loadingItem.textContent = 'Загрузка рейтинга...';
-                leaderboardList.appendChild(loadingItem);
-
-                db.collection('users').orderBy('score', 'desc').limit(10).get().then(snapshot => {
-                    leaderboardList.textContent = '';
-                    if (snapshot.empty) {
-                        const emptyItem = document.createElement('li');
-                        emptyItem.className = 'leaderboard-status';
-                        emptyItem.textContent = 'Пока нет участников';
-                        leaderboardList.appendChild(emptyItem);
-                        return;
-                    }
-
-                    snapshot.forEach((doc, index) => {
-                        const user = doc.data();
-                        const item = document.createElement('li');
-                        item.className = 'leaderboard-item';
-
-                        const rank = document.createElement('span');
-                        rank.className = 'leaderboard-rank';
-                        rank.textContent = index + 1;
-
-                        const name = document.createElement('span');
-                        name.className = 'leaderboard-name';
-                        name.textContent = user.nickname || 'Игрок';
-
-                        const score = document.createElement('span');
-                        score.className = 'leaderboard-score';
-                        score.textContent = `${Number(user.score) || 0} очк.`;
-
-                        item.append(rank, name, score);
-                        leaderboardList.appendChild(item);
-                    });
+            function syncLeaderboard() {
+                if (!currentAuthUser) return Promise.resolve();
+                const nickname = (userData?.nickname || '').trim();
+                const publicNickname = nickname && nickname !== currentAuthUser.email ? nickname.slice(0, 30) : 'Игрок';
+                return db.collection('leaderboard').doc(currentAuthUser.uid).set({
+                    nickname: publicNickname,
+                    avatarUrl: (userData?.avatarUrl || '').slice(0, 2048),
+                    score: Number(totalScore) || 0
                 }).catch(error => {
-                    console.error('Ошибка загрузки лидерборда:', error);
-                    leaderboardList.textContent = '';
-                    const errorItem = document.createElement('li');
-                    errorItem.className = 'leaderboard-status';
-                    errorItem.textContent = 'Не удалось загрузить рейтинг';
-                    leaderboardList.appendChild(errorItem);
+                    console.error('Ошибка обновления лидерборда:', error);
                 });
             }
 
@@ -881,7 +835,6 @@
                     updateUserInterface();
                     maybeSelectTrack();
                 }
-                loadLeaderboard();
             });
 
             let isLoginMode = true;
@@ -1328,7 +1281,6 @@
             resultOverlay.addEventListener('click', e => { if (e.target === resultOverlay) resetGame(); });
 
             loadTracks();
-            loadLeaderboard();
             guessInput.focus();
         })();
     </script>

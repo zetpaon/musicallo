@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лидерборд — Угадай трек</title>
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore-compat.js"></script>
+    <style>
+        :root { --bg: #0a0a0f; --card: #151522; --border: #2a2a3e; --accent: #a29bfe; --text: #e0e0e0; --dim: #8888aa; --warning: #fdcb6e; }
+        * { box-sizing: border-box; }
+        body { min-height: 100vh; margin: 0; padding: 20px; display: grid; place-items: center; color: var(--text); font-family: 'Segoe UI', 'Inter', sans-serif; background: var(--bg); background-image: radial-gradient(ellipse at 20% 50%, rgba(108,92,231,.12), transparent 60%); }
+        main { width: 100%; max-width: 560px; padding: 32px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+        header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+        h1 { margin: 0; font-size: 1.7rem; }
+        .back { color: var(--accent); text-decoration: none; font-weight: 600; }
+        ol { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+        .player { display: grid; grid-template-columns: 32px 46px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; background: rgba(255,255,255,.04); }
+        .rank { color: var(--accent); font-weight: 700; text-align: center; }
+        .avatar { width: 46px; height: 46px; display: grid; place-items: center; overflow: hidden; border-radius: 50%; background: #333; font-size: 22px; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+        .level { margin-top: 3px; color: var(--dim); font-size: .82rem; }
+        .score { color: var(--warning); font-weight: 700; white-space: nowrap; }
+        .status { padding: 24px; color: var(--dim); text-align: center; }
+    </style>
+</head>
+<body>
+    <main>
+        <header><h1>🏆 Лидерборд</h1><a class="back" href="index.html">← Играть</a></header>
+        <ol id="leaderboard" aria-live="polite"><li class="status">Загрузка рейтинга...</li></ol>
+    </main>
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyAjaN1dabndg-ccVFGcrxdkuHB9wozyrfw", authDomain: "musicallo-3cd30.firebaseapp.com", projectId: "musicallo-3cd30", storageBucket: "musicallo-3cd30.firebasestorage.app", messagingSenderId: "470668714876", appId: "1:470668714876:web:b26686b92ac4f6c6f87af9" };
+        firebase.initializeApp(firebaseConfig);
+        const list = document.getElementById('leaderboard');
+        const thresholdForLevel = level => level <= 10 ? 150 : 150 + Math.min(70, Math.ceil((level - 10) / 10) * 5);
+        function getLevel(score) {
+            let level = 1, required = 150;
+            while (score >= required && level < 150) { level++; required += thresholdForLevel(level); }
+            return level;
+        }
+        function safeAvatarUrl(value) {
+            try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) ? url.href : ''; } catch { return ''; }
+        }
+        firebase.firestore().collection('leaderboard').orderBy('score', 'desc').limit(10).get().then(snapshot => {
+            list.textContent = '';
+            if (snapshot.empty) { list.innerHTML = '<li class="status">Пока нет участников</li>'; return; }
+            snapshot.forEach((doc, index) => {
+                const user = doc.data(), score = Number(user.score) || 0;
+                const item = document.createElement('li'); item.className = 'player';
+                const rank = document.createElement('span'); rank.className = 'rank'; rank.textContent = index + 1;
+                const avatar = document.createElement('span'); avatar.className = 'avatar';
+                const url = safeAvatarUrl(user.avatarUrl);
+                if (url) { const image = document.createElement('img'); image.src = url; image.alt = ''; image.referrerPolicy = 'no-referrer'; avatar.appendChild(image); } else avatar.textContent = '👤';
+                const details = document.createElement('div');
+                const name = document.createElement('div'); name.className = 'name'; name.textContent = user.nickname || 'Игрок';
+                const level = document.createElement('div'); level.className = 'level'; level.textContent = `Уровень ${getLevel(score)}`;
+                details.append(name, level);
+                const scoreElement = document.createElement('span'); scoreElement.className = 'score'; scoreElement.textContent = `${score} очк.`;
+                item.append(rank, avatar, details, scoreElement); list.appendChild(item);
+            });
+        }).catch(error => { console.error('Ошибка загрузки лидерборда:', error); list.innerHTML = '<li class="status">Рейтинг временно недоступен</li>'; });
+    </script>
+</body>
+</html>
